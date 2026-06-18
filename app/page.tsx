@@ -513,7 +513,7 @@ export default function CleanzoWebsite() {
             <div className="svc-header-row" style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',marginBottom:56,flexWrap:'wrap',gap:20}}>
               <div>
                 <div className="section-eyebrow">What we offer</div>
-                <h2 className="section-heading" style={{fontSize:'clamp(28px,7vw,46px)'}}>Book trusted house help.</h2>
+                <h2 className="section-heading" style={{fontSize:'clamp(28px,7vw,46px)'}}>Book trained and verified Househelp.</h2>
                 <p style={{color:'#6b7280',marginTop:11,fontSize:16,maxWidth:460}}>{SERVICES.length} services · Flat pricing · Equipment included</p>
               </div>
               <button className="btn-outline" style={{padding:'12px 28px',fontSize:14}} onClick={goServices}>View all {SERVICES.length} services →</button>
