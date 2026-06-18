@@ -117,32 +117,33 @@ const FAQ_ITEMS = [
   {
     category:'Booking', icon:'📅',
     questions:[
-      { q:'How do I book a Cleenzo service?', a:'Download the Cleenzo app, choose your service, pick a time slot and pay in under 60 seconds. You can also book via our website. A verified Pro will be assigned instantly.' },
+      { q:'How do I book a Cleenzo service?', a:'Download the Cleenzo app, choose your service, pick a time slot and pay. A verified Partner will be assigned instantly.' },
       { q:'Can I schedule a recurring booking?', a:'Yes! You can set up daily, weekly, or monthly recurring bookings at a discounted rate. Manage everything from the app — pause, reschedule, or cancel anytime.' },
-      { q:'How far in advance can I book?', a:'You can book up to 30 days in advance. For same-day bookings, we recommend booking at least 2 hours before your preferred time slot.' },
+      { q: 'What types of bookings are available?', a: 'We offer two types of bookings: Scheduled Booking and Instant Booking.'},
+      { q: 'What is the difference between Scheduled Booking and Instant Booking?', a: 'Instant Booking provides a house help within approximately 10 minutes of placing your request. Scheduled Booking allows you to choose a preferred date and time slot, and a house help will be assigned for that specific schedule.'},
+      { q:'How far in advance can I book?', a:'You can book up to 5 days in advance. For same-day bookings, we recommend booking at least 2 hours before your preferred time slot.' },
     ],
   },
   {
     category:'Services', icon:'🧹',
     questions:[
-      { q:'Do Cleenzo Pros bring their own supplies?', a:'Yes — all cleaning equipment and products are included in every booking. You do not need to provide anything. Just make sure the space is accessible.' },
-      { q:'What if I am not satisfied with the service?', a:'We offer a 100% satisfaction guarantee. Report any issue within 24 hours and we will arrange a free re-clean within 48 hours at no extra cost.' },
-      { q:'Are the Cleenzo Pros verified?', a:'Every Cleenzo Pro goes through background verification, in-person training, and a quality assessment before they are allowed on the platform.' },
+      { q:'Do Cleenzo Partner bring their own supplies?', a:'No, Our service partners do not bring cleaning equipment or products. Customers are requested to provide all necessary items.' },
+      { q:'What if I am not satisfied with the service?', a:'We offer a 100% satisfaction guarantee.' },
+      { q:'Are the Cleenzo Partner verified?', a:'Every Cleenzo Partner goes through background verification, in-person training, and a quality assessment before they are allowed on the platform.' },
     ],
   },
   {
     category:'Payments', icon:'💳',
     questions:[
       { q:'What payment methods do you accept?', a:'We accept UPI (GPay, PhonePe, Paytm), credit and debit cards, and all major digital wallets. Cash is not accepted to keep things safe and transparent.' },
-      { q:'Are there any hidden charges?', a:'Never. The price you see is the price you pay. All equipment and products are included. No service fees, no surge pricing, no surprises.' },
+      { q:'Are there any hidden charges?', a:'Never. The price you see is the price you pay.' },
       { q:'How does the cancellation refund work?', a:'Cancel more than 2 hours before your booking and get a full refund instantly. Cancellations within 2 hours incur a 50% fee. If the Pro cancels, you get a 100% refund.' },
     ],
   },
   {
     category:'Cities', icon:'📍',
     questions:[
-      { q:'Which cities does Cleenzo serve?', a:'We currently serve Nashik, Pune, Mumbai, Nagpur, Aurangabad, and Kolhapur. We are expanding rapidly — drop us a message if you want Cleenzo in your city!' },
-      { q:'Will Cleenzo come to my area?', a:'We cover most areas in our active cities. Enter your address in the app to instantly check availability. If we are not there yet, you can join the waitlist.' },
+      { q:'Which cities does Cleenzo serve?', a:'We currently serve in Mumbai - Andheri, Vile Parle and Juhu.' },
     ],
   },
 ];
@@ -194,6 +195,7 @@ export default function CleanzoWebsite() {
         @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(6,182,212,.45)}70%{box-shadow:0 0 0 10px rgba(6,182,212,0)}}
         @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
         @keyframes faqSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes slideInRight{from{opacity:.4;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}
         .a1{animation:fadeUp .7s .05s both}.a2{animation:fadeUp .7s .18s both}.a3{animation:fadeUp .7s .32s both}
         .a4{animation:fadeUp .7s .46s both}.a5{animation:fadeUp .7s .58s both}
         .float-a{animation:floatA 4s ease-in-out infinite}
@@ -249,16 +251,82 @@ export default function CleanzoWebsite() {
         .faq-tab-btn{padding:9px 20px;border-radius:50px;font-size:13px;font-weight:600;border:1.5px solid #bfdbfe;background:#fff;color:#1d4ed8;cursor:pointer;transition:all .22s;font-family:'Outfit',sans-serif;display:inline-flex;align-items:center;gap:7px;}
         .faq-tab-btn:hover{border-color:#60a5fa;background:#eff6ff;color:#1d4ed8;}
         .faq-tab-btn.active{background:linear-gradient(135deg,#0ea5e9,#0284c7);border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(6,182,212,.3);}
+
+        /* default service grids — 2 columns minimum baseline */
+        .home-services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:16px;}
+        .all-services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px;}
+
+        /* ─── TABLET ─── */
+        @media(max-width:900px){
+          .home-services-grid{grid-template-columns:repeat(3,1fr)!important;}
+          .all-services-grid{grid-template-columns:repeat(3,1fr)!important;}
+        }
+
+        /* ─── MOBILE ─── */
         @media(max-width:768px){
           .hero-grid{grid-template-columns:1fr!important;}
-          .hero-img-col{display:none!important;}
-          .detail-grid{grid-template-columns:1fr!important;}
+          /* show the model photo BELOW the text on mobile, scaled to fit */
+          .hero-img-col{display:flex!important;height:380px!important;margin-top:8px!important;}
+          .hero-dots{display:none!important;}
+          .hero-circle-1{width:270px!important;height:270px!important;top:20px!important;}
+          .hero-circle-2{width:270px!important;height:270px!important;top:20px!important;}
+          .hero-model-box{width:290px!important;height:360px!important;}
+          .hero-float-testimonial{bottom:54px!important;left:0!important;max-width:165px!important;padding:12px 14px!important;}
+          .hero-float-reviewer{bottom:16px!important;right:0!important;}
+          .detail-grid{grid-template-columns:1fr!important;gap:28px!important;}
           .detail-sidebar{display:none!important;}
           .nav-desktop{display:none!important;}
           .hamburger{display:flex!important;}
           .how-grid{grid-template-columns:1fr!important;}
           .faq-tabs{flex-wrap:wrap!important;}
+
+          /* services → 2 columns (2 x N) on mobile */
+          .home-services-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;}
+          .all-services-grid{grid-template-columns:repeat(2,1fr)!important;gap:12px!important;}
+
+          /* tighter section padding so content fits the screen */
+          .sec-pad{padding-top:60px!important;padding-bottom:60px!important;padding-left:16px!important;padding-right:16px!important;}
+          .hero-sec{padding-left:16px!important;padding-right:16px!important;min-height:auto!important;}
+          .hero-inner{padding:48px 0!important;gap:28px!important;}
+          .nav-pad{padding-left:18px!important;padding-right:18px!important;}
+          .svc-header-row{flex-direction:column!important;align-items:flex-start!important;}
+          .svc-header-row .btn-outline{width:100%;text-align:center;}
+          .svcview-header{padding:36px 16px 32px!important;}
+          .svcview-headrow{flex-direction:column!important;align-items:flex-start!important;}
+          .detail-wrap{padding:28px 16px 64px!important;}
+          .detail-subbar{top:64px!important;padding-left:16px!important;padding-right:16px!important;}
+          .cta-card{padding:32px 22px!important;}
+          .cta-inner{padding:48px 16px!important;}
+          .footer-pad{padding:44px 18px 24px!important;}
+          .footer-bottom{flex-direction:column!important;align-items:flex-start!important;gap:8px!important;}
+          .services-cta-banner{padding:32px 22px!important;}
+          .detail-hero{padding:32px 22px!important;gap:20px!important;}
+          /* first-order offer banner → features + stub restack on mobile */
+          .offer-section{padding-left:16px!important;padding-right:16px!important;}
+          .offer-band{padding:5px!important;}
+          .offer-inner{flex-direction:column!important;align-items:stretch!important;}
+          .offer-left{min-width:100%!important;padding:28px 22px 24px!important;}
+          .offer-head{font-size:28px!important;}
+          .offer-features{width:100%!important;flex-wrap:wrap!important;gap:18px 12px!important;padding:8px 16px 26px!important;border-top:2px dashed rgba(255,255,255,0.35)!important;}
+          .offer-stub{width:100%!important;align-self:auto!important;border-left:none!important;border-top:2px dashed rgba(255,255,255,0.55)!important;flex-direction:row!important;gap:18px!important;padding:22px 18px!important;}
+          .offer-stub-text{margin-top:0!important;text-align:left!important;}
+          .offer-notch-1{top:-13px!important;left:-13px!important;bottom:auto!important;}
+          .offer-notch-2{top:-13px!important;left:auto!important;right:-13px!important;bottom:auto!important;}
         }
+
+        /* ─── SMALL PHONES ─── */
+        @media(max-width:480px){
+          .home-svc-card{padding:14px 12px!important;}
+          .home-svc-card .svc-img-wrap{height:104px!important;}
+          .svc-card .svc-img-wrap{height:118px!important;}
+          .nav-bar-inner{height:62px!important;}
+          .faq-light-q{padding:16px 16px!important;}
+          .faq-light-a{padding:0 16px 18px 16px!important;}
+          .offer-head{font-size:24px!important;}
+          .offer-head span{font-size:32px!important;}
+          .offer-left{padding:24px 18px 22px!important;}
+        }
+
         @media(min-width:769px){.hamburger{display:none!important;}}
       `}</style>
 
@@ -270,10 +338,10 @@ export default function CleanzoWebsite() {
       )}
 
       {/* ═══ NAVBAR ═══ */}
-      <nav style={{position:'sticky',top:0,zIndex:100,background:scrolled?'rgba(7,182,213,.95)':'#07B6D5',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderBottom:scrolled?'1px solid rgba(255,255,255,.25)':'1px solid rgba(255,255,255,.12)',padding:'0 28px',boxShadow:scrolled?'0 6px 28px rgba(8,80,110,.22)':'none',transition:'box-shadow .3s,background .3s,border-color .3s'}}>
-        <div style={{maxWidth:1180,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',height:72}}>
+      <nav className="nav-pad" style={{position:'sticky',top:0,zIndex:100,background:scrolled?'rgba(7,182,213,.95)':'#07B6D5',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderBottom:scrolled?'1px solid rgba(255,255,255,.25)':'1px solid rgba(255,255,255,.12)',padding:'0 28px',boxShadow:scrolled?'0 6px 28px rgba(8,80,110,.22)':'none',transition:'box-shadow .3s,background .3s,border-color .3s'}}>
+        <div className="nav-bar-inner" style={{maxWidth:1180,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',height:72}}>
           <button onClick={goHome} style={{display:'flex',alignItems:'center',background:'none',border:'none',cursor:'pointer',padding:0}}>
-            <CleenzoLogo height={38} wordColor="#0c4a6e" accentColor="#ffffff" />
+            <CleenzoLogo height={34} wordColor="#0c4a6e" accentColor="#ffffff" />
           </button>
           <div className="nav-desktop" style={{display:'flex',gap:40,alignItems:'center'}}>
             <button className="nav-link" onClick={goServices}>Services</button>
@@ -294,11 +362,11 @@ export default function CleanzoWebsite() {
           </button>
         </div>
         {mobileOpen && (
-          <div style={{background:'#fff',borderTop:'1px solid #f0f0f0',padding:'16px 28px',display:'flex',flexDirection:'column',gap:14}}>
+          <div style={{background:'#fff',borderTop:'1px solid #f0f0f0',padding:'16px 28px',display:'flex',flexDirection:'column',gap:14,margin:'0 -18px',animation:'slideInRight .34s cubic-bezier(.22,1,.36,1) both',willChange:'transform'}}>
             {['Services','How it works','Cities','Reviews','FAQ'].map(l => (
-              <button key={l} className="nav-link" style={{textAlign:'left',padding:'5px 0',fontSize:15}} onClick={() => { setMobileOpen(false); if (l==='Services') goServices(); else scrollTo(l.toLowerCase().replace(' ','')); }}>{l}</button>
+              <button key={l} style={{textAlign:'left',padding:'8px 18px',fontSize:15,fontWeight:600,color:'#0c4a6e',background:'none',border:'none',cursor:'pointer',fontFamily:"'Outfit',sans-serif"}} onClick={() => { setMobileOpen(false); if (l==='Services') goServices(); else scrollTo(l.toLowerCase().replace(/ /g,'')); }}>{l}</button>
             ))}
-            <button className="btn-primary" style={{padding:'11px',fontSize:14,marginTop:4}} onClick={() => handleApp('play')}>Download App</button>
+            <button className="btn-primary" style={{padding:'12px',fontSize:14,marginTop:4,margin:'4px 18px 0'}} onClick={() => { setMobileOpen(false); handleApp('play'); }}>Download App</button>
           </div>
         )}
       </nav>
@@ -307,11 +375,11 @@ export default function CleanzoWebsite() {
       {view === 'home' && <>
 
         {/* HERO */}
-        <section style={{background:'linear-gradient(160deg,#eafaff 0%,#d8f3fb 55%,#c4edf7 100%)',padding:'0 28px',overflow:'hidden',minHeight:'92vh',display:'flex',alignItems:'center',position:'relative'}}>
+        <section className="hero-sec" style={{background:'linear-gradient(160deg,#eafaff 0%,#d8f3fb 55%,#c4edf7 100%)',padding:'0 28px',overflow:'hidden',minHeight:'92vh',display:'flex',alignItems:'center',position:'relative'}}>
           <div className="blob" style={{width:520,height:520,background:'#a5f3fc',top:'-140px',right:'-60px'}}/>
           <div className="blob" style={{width:320,height:320,background:'#67e8f9',bottom:'-80px',left:'6%'}}/>
           <div className="hero-pattern"/>
-          <div style={{maxWidth:1180,margin:'0 auto',width:'100%',display:'grid',gridTemplateColumns:'1.02fr .98fr',gap:48,alignItems:'center',padding:'64px 0',position:'relative',zIndex:1}} className="hero-grid">
+          <div className="hero-grid hero-inner" style={{maxWidth:1180,margin:'0 auto',width:'100%',display:'grid',gridTemplateColumns:'1.02fr .98fr',gap:48,alignItems:'center',padding:'64px 0',position:'relative',zIndex:1}}>
 
             {/* LEFT */}
             <div>
@@ -319,7 +387,7 @@ export default function CleanzoWebsite() {
                 <span style={{width:8,height:8,background:'#22c55e',borderRadius:'50%',display:'inline-block',boxShadow:'0 0 0 4px rgba(34,197,94,.25)',animation:'pulse 2s infinite'}}/>
                 Professional Cleaning Service Company
               </div>
-              <h1 className="a2" style={{fontFamily:"'Outfit',sans-serif",fontWeight:800,fontSize:'clamp(40px,5vw,68px)',lineHeight:1.08,letterSpacing:'-1px',color:'#0c2740',marginBottom:22}}>
+              <h1 className="a2" style={{fontFamily:"'Outfit',sans-serif",fontWeight:800,fontSize:'clamp(34px,8vw,68px)',lineHeight:1.08,letterSpacing:'-1px',color:'#0c2740',marginBottom:22}}>
                 Clean Home{' '}
                 <span style={{background:'linear-gradient(90deg,#06b6d4,#0891b2)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Happy You!</span><br/>
               </h1>
@@ -349,21 +417,21 @@ export default function CleanzoWebsite() {
             {/* RIGHT — model image with floating cards */}
             <div className="hero-img-col" style={{position:'relative',height:640,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
               {/* dotted decoration */}
-              <div style={{position:'absolute',top:24,right:4,width:130,height:100,backgroundImage:'radial-gradient(rgba(8,145,178,.35) 2px,transparent 2px)',backgroundSize:'18px 18px',opacity:.6,pointerEvents:'none'}}/>
+              <div className="hero-dots" style={{position:'absolute',top:24,right:4,width:130,height:100,backgroundImage:'radial-gradient(rgba(8,145,178,.35) 2px,transparent 2px)',backgroundSize:'18px 18px',opacity:.6,pointerEvents:'none'}}/>
               {/* circles sit behind the upper body */}
-              <div style={{position:'absolute',top:40,left:'50%',transform:'translateX(-50%)',width:470,height:470,borderRadius:'50%',background:'linear-gradient(135deg,#22b8e0,#0e7aa0)',boxShadow:'0 30px 80px rgba(14,116,144,.3)'}}/>
-              <div style={{position:'absolute',top:40,left:'50%',transform:'translateX(-50%) scale(1.1)',width:470,height:470,borderRadius:'50%',border:'2px dashed rgba(255,255,255,.45)',pointerEvents:'none'}}/>
+              <div className="hero-circle-1" style={{position:'absolute',top:40,left:'50%',transform:'translateX(-50%)',width:470,height:470,borderRadius:'50%',background:'linear-gradient(135deg,#22b8e0,#0e7aa0)',boxShadow:'0 30px 80px rgba(14,116,144,.3)'}}/>
+              <div className="hero-circle-2" style={{position:'absolute',top:40,left:'50%',transform:'translateX(-50%) scale(1.1)',width:470,height:470,borderRadius:'50%',border:'2px dashed rgba(255,255,255,.45)',pointerEvents:'none'}}/>
               {/* model image — bigger, anchored to the bottom (drop your photo at /public/hero-model.png) */}
-              <div style={{position:'relative',width:520,height:620,zIndex:2,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
+              <div className="hero-model-box" style={{position:'relative',width:520,height:620,zIndex:2,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
                 <HeroImage src="/hero-model.png" />
               </div>
               {/* testimonial card */}
-              <div className="float-a" style={{position:'absolute',bottom:96,left:-12,background:'#fff',borderRadius:18,padding:'16px 18px',boxShadow:'0 16px 44px rgba(6,182,212,.2)',zIndex:5,maxWidth:210}}>
+              <div className="float-a hero-float-testimonial" style={{position:'absolute',bottom:96,left:-12,background:'#fff',borderRadius:18,padding:'16px 18px',boxShadow:'0 16px 44px rgba(6,182,212,.2)',zIndex:5,maxWidth:210}}>
                 <div style={{width:30,height:30,borderRadius:8,background:'#e0f7fa',display:'flex',alignItems:'center',justifyContent:'center',color:'#0891b2',fontWeight:800,fontSize:22,lineHeight:1,marginBottom:8}}>&ldquo;</div>
                 <div style={{fontSize:13,fontWeight:600,color:'#0c4a6e',lineHeight:1.5}}>Best cleaning service for your home and office.</div>
               </div>
               {/* reviewer chip */}
-              <div className="float-b" style={{position:'absolute',bottom:40,right:-10,background:'#fff',borderRadius:16,padding:'12px 16px',boxShadow:'0 14px 40px rgba(0,0,0,.12)',zIndex:5,display:'flex',alignItems:'center',gap:10}}>
+              <div className="float-b hero-float-reviewer" style={{position:'absolute',bottom:40,right:-10,background:'#fff',borderRadius:16,padding:'12px 16px',boxShadow:'0 14px 40px rgba(0,0,0,.12)',zIndex:5,display:'flex',alignItems:'center',gap:10}}>
                 <div style={{width:40,height:40,borderRadius:'50%',background:'linear-gradient(135deg,#06b6d4,#0e7490)',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:700,fontSize:13}}>PM</div>
                 <div>
                   <div style={{fontSize:13,fontWeight:700,color:'#0c4a6e'}}>Priya M.</div>
@@ -374,22 +442,86 @@ export default function CleanzoWebsite() {
           </div>
         </section>
 
+        {/* ═══ FIRST-ORDER OFFER BANNER ═══ */}
+        <section className="offer-section" style={{background:'#ffffff',padding:'44px 28px 8px'}}>
+          <div style={{maxWidth:1180,margin:'0 auto'}}>
+            <div className="offer-band" style={{position:'relative',overflow:'hidden',borderRadius:26,padding:6,background:'linear-gradient(135deg,#0e7490,#06b6d4 45%,#22d3ee)',boxShadow:'0 24px 60px rgba(6,182,212,0.4)'}}>
+              <div style={{position:'absolute',top:-60,left:-40,width:220,height:220,borderRadius:'50%',background:'rgba(255,255,255,0.12)',pointerEvents:'none'}}/>
+              <div style={{position:'absolute',bottom:-80,right:80,width:200,height:200,borderRadius:'50%',background:'rgba(255,255,255,0.10)',pointerEvents:'none'}}/>
+              <div style={{position:'absolute',inset:0,backgroundImage:'radial-gradient(rgba(255,255,255,0.16) 1.5px,transparent 1.5px)',backgroundSize:'22px 22px',opacity:.5,pointerEvents:'none'}}/>
+
+              <div className="offer-inner" style={{position:'relative',zIndex:1,display:'flex',alignItems:'center',flexWrap:'wrap',border:'2px dashed rgba(255,255,255,0.55)',borderRadius:22,overflow:'hidden'}}>
+
+                {/* LEFT — offer copy + button */}
+                <div className="offer-left" style={{flex:'1 1 360px',minWidth:300,padding:'34px 32px'}}>
+                  <div style={{display:'inline-flex',alignItems:'center',gap:7,background:'#fde047',color:'#854d0e',borderRadius:50,padding:'7px 16px',fontSize:12.5,fontWeight:800,letterSpacing:1,textTransform:'uppercase',boxShadow:'0 6px 16px rgba(0,0,0,0.18)'}}>
+                    ⚡ Limited time deal
+                  </div>
+                  <div className="offer-head" style={{fontSize:34,fontWeight:900,color:'#fff',lineHeight:1.12,letterSpacing:'-0.6px',marginTop:18}}>
+                    Your first clean for just{' '}
+                    <span style={{display:'inline-block',background:'#fff',color:'#0e7490',padding:'4px 18px',borderRadius:16,fontSize:40,fontWeight:900,boxShadow:'0 8px 20px rgba(0,0,0,0.2)',marginTop:8}}>₹25</span>
+                  </div>
+                  <p style={{fontSize:15,color:'rgba(255,255,255,0.94)',margin:'18px 0 22px',lineHeight:1.6,maxWidth:380}}>
+                    Book <b>any</b> cleaning service — verified pros, all equipment &amp; products included.
+                  </p>
+                  <button onClick={goServices} style={{display:'inline-flex',alignItems:'center',gap:9,background:'#fff',color:'#0e7490',border:'none',borderRadius:50,padding:'15px 36px',fontSize:16,fontWeight:800,fontFamily:"'Outfit',sans-serif",cursor:'pointer',boxShadow:'0 10px 26px rgba(0,0,0,0.22)'}}>
+                    Grab the deal →
+                  </button>
+                </div>
+
+                {/* MIDDLE — trust features */}
+                <div className="offer-features" style={{display:'flex',alignItems:'flex-start',justifyContent:'center',gap:26,padding:'24px 26px'}}>
+                  <OfferFeature l1="Background" l2="Verified">
+                    <path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6l7-3z"/>
+                    <path d="M9 12l2 2 4-4.2"/>
+                  </OfferFeature>
+                  <OfferFeature l1="Satisfaction" l2="Guaranteed">
+                    <circle cx="12" cy="9.5" r="5.5"/>
+                    <path d="M12 7l1.1 2.2 2.4.3-1.8 1.7.5 2.4L12 12.6 9.8 13.6l.5-2.4-1.8-1.7 2.4-.3z"/>
+                    <path d="M9 14.5L8 21l4-2 4 2-1-6.5"/>
+                  </OfferFeature>
+                  <OfferFeature l1="Instant &" l2="Affordable">
+                    <circle cx="12" cy="12" r="8"/>
+                    <path d="M12 7.5V12l3 2"/>
+                  </OfferFeature>
+                </div>
+
+                {/* RIGHT — discount stub */}
+                <div className="offer-stub" style={{position:'relative',width:200,alignSelf:'stretch',background:'rgba(255,255,255,0.14)',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'30px 18px',borderLeft:'2px dashed rgba(255,255,255,0.55)'}}>
+                  <div className="offer-notch-1" style={{position:'absolute',top:-13,left:-13,width:26,height:26,borderRadius:'50%',background:'#ffffff'}}/>
+                  <div className="offer-notch-2" style={{position:'absolute',bottom:-13,left:-13,width:26,height:26,borderRadius:'50%',background:'#ffffff'}}/>
+                  <div style={{width:84,height:84,borderRadius:'50%',background:'#fde047',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',color:'#854d0e',boxShadow:'0 8px 20px rgba(0,0,0,0.22)',transform:'rotate(-8deg)',lineHeight:1,flexShrink:0}}>
+                    <span style={{fontSize:10,fontWeight:800,letterSpacing:1}}>UP TO</span>
+                    <span style={{fontSize:28,fontWeight:900,margin:'1px 0'}}>80%</span>
+                    <span style={{fontSize:11,fontWeight:800,letterSpacing:1.5}}>OFF</span>
+                  </div>
+                  <div className="offer-stub-text" style={{marginTop:16,textAlign:'center',color:'#fff'}}>
+                    <div style={{fontSize:13,fontWeight:700,display:'flex',alignItems:'center',gap:5,justifyContent:'center'}}>⏱ New users only</div>
+                    <div style={{fontSize:12,color:'rgba(255,255,255,0.8)',marginTop:5}}>First booking · One per user</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* SERVICES */}
-        <section id="services" style={{padding:'100px 28px',background:'#fafafa',position:'relative',overflow:'hidden'}}>
+        <section id="services" className="sec-pad" style={{padding:'100px 28px',background:'#fafafa',position:'relative',overflow:'hidden'}}>
           <div style={{position:'absolute',top:-100,right:-100,width:400,height:400,background:'radial-gradient(circle,rgba(6,182,212,.055) 0%,transparent 70%)',pointerEvents:'none'}}/>
           <div style={{maxWidth:1180,margin:'0 auto'}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',marginBottom:56,flexWrap:'wrap',gap:20}}>
+            <div className="svc-header-row" style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',marginBottom:56,flexWrap:'wrap',gap:20}}>
               <div>
                 <div className="section-eyebrow">What we offer</div>
-                <h2 className="section-heading" style={{fontSize:'clamp(30px,3.5vw,46px)'}}>Book trusted house help.</h2>
+                <h2 className="section-heading" style={{fontSize:'clamp(28px,7vw,46px)'}}>Book trusted house help.</h2>
                 <p style={{color:'#6b7280',marginTop:11,fontSize:16,maxWidth:460}}>{SERVICES.length} services · Flat pricing · Equipment included</p>
               </div>
               <button className="btn-outline" style={{padding:'12px 28px',fontSize:14}} onClick={goServices}>View all {SERVICES.length} services →</button>
             </div>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(195px,1fr))',gap:16}}>
+            <div className="home-services-grid">
               {SERVICES.map(s => (
                 <div key={s.id} className="home-svc-card" onClick={() => openDetail(s)}>
-                  <div style={{height:130,borderRadius:16,overflow:'hidden',marginBottom:15,position:'relative',background:s.bg}}>
+                  <div className="svc-img-wrap" style={{height:130,borderRadius:16,overflow:'hidden',marginBottom:15,position:'relative',background:s.bg}}>
                     <ServiceImage src={s.image} alt={s.name} bg={s.bg} color={s.color}/>
                     {s.popular && <div style={{position:'absolute',top:8,right:8,background:s.color,color:'#fff',fontSize:9,fontWeight:700,padding:'2px 8px',borderRadius:20,letterSpacing:1.2,zIndex:2}}>TOP</div>}
                   </div>
@@ -405,11 +537,11 @@ export default function CleanzoWebsite() {
         </section>
 
         {/* HOW IT WORKS */}
-        <section id="howitworks" style={{padding:'100px 28px',background:'#fff'}}>
+        <section id="howitworks" className="sec-pad" style={{padding:'100px 28px',background:'#fff'}}>
           <div style={{maxWidth:1060,margin:'0 auto'}}>
             <div style={{textAlign:'center',marginBottom:60}}>
               <div className="section-eyebrow">Simple process</div>
-              <h2 className="section-heading" style={{fontSize:'clamp(30px,3.5vw,46px)'}}>Booked in 3 easy steps</h2>
+              <h2 className="section-heading" style={{fontSize:'clamp(28px,7vw,46px)'}}>Booked in 3 easy steps</h2>
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:24}} className="how-grid">
               {HOW_STEPS.map((step,i) => (
@@ -430,7 +562,7 @@ export default function CleanzoWebsite() {
         </section>
 
         {/* ═══ FAQ — LIGHT BLUE THEME ═══ */}
-        <section id="faq" style={{padding:'100px 28px',background:'linear-gradient(160deg,#f0f9ff 0%,#e0f2fe 40%,#f0fdfe 100%)',position:'relative',overflow:'hidden'}}>
+        <section id="faq" className="sec-pad" style={{padding:'100px 28px',background:'linear-gradient(160deg,#f0f9ff 0%,#e0f2fe 40%,#f0fdfe 100%)',position:'relative',overflow:'hidden'}}>
           {/* Decorative blobs */}
           <div style={{position:'absolute',top:-80,right:-80,width:360,height:360,background:'radial-gradient(circle,rgba(6,182,212,.1) 0%,transparent 70%)',pointerEvents:'none'}}/>
           <div style={{position:'absolute',bottom:-60,left:-60,width:280,height:280,background:'radial-gradient(circle,rgba(14,165,233,.08) 0%,transparent 70%)',pointerEvents:'none'}}/>
@@ -443,7 +575,7 @@ export default function CleanzoWebsite() {
               <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(6,182,212,.1)',border:'1.5px solid rgba(6,182,212,.3)',borderRadius:50,padding:'6px 18px',fontSize:12,fontWeight:700,color:'#0891b2',letterSpacing:2,textTransform:'uppercase',marginBottom:16}}>
                 💬 Got questions?
               </div>
-              <h2 className="section-heading" style={{fontSize:'clamp(30px,3.5vw,48px)',marginBottom:14,color:'#0c4a6e'}}>
+              <h2 className="section-heading" style={{fontSize:'clamp(28px,7vw,48px)',marginBottom:14,color:'#0c4a6e'}}>
                 Frequently asked<br/>questions
               </h2>
               <p style={{color:'#374151',fontSize:16,maxWidth:460,margin:'0 auto',lineHeight:1.75}}>
@@ -497,7 +629,6 @@ export default function CleanzoWebsite() {
                 <div style={{width:52,height:52,background:'linear-gradient(135deg,#e0f2fe,#bae6fd)',borderRadius:18,display:'flex',alignItems:'center',justifyContent:'center',fontSize:24,flexShrink:0}}>💬</div>
                 <div>
                   <div style={{fontSize:16,fontWeight:700,color:'#0c4a6e',marginBottom:4}}>Still have a question?</div>
-                  <div style={{fontSize:13.5,color:'#6b7280'}}>Our team is available Mon–Sat, 9 AM – 7 PM IST</div>
                 </div>
               </div>
               <div style={{display:'flex',gap:10,flexWrap:'wrap'}}>
@@ -515,19 +646,16 @@ export default function CleanzoWebsite() {
         {/* DOWNLOAD CTA */}
         <section style={{position:'relative',overflow:'hidden',minHeight:520,display:'flex',alignItems:'center',padding:'0'}}>
           <img src="/cleenzo-pros.png" alt="Cleenzo Pros cleaning" style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center'}}/>
-          <div style={{position:'relative',zIndex:2,width:'100%',display:'flex',justifyContent:'center',alignItems:'center',padding:'60px 28px'}}>
-            <div style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(18px)',WebkitBackdropFilter:'blur(18px)',border:'1.5px solid rgba(255,255,255,.85)',borderRadius:32,padding:'44px 52px',textAlign:'center',maxWidth:480,boxShadow:'0 20px 64px rgba(6,182,212,.18)'}}>
+          <div className="cta-inner" style={{position:'relative',zIndex:2,width:'100%',display:'flex',justifyContent:'center',alignItems:'center',padding:'60px 28px'}}>
+            <div className="cta-card" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(18px)',WebkitBackdropFilter:'blur(18px)',border:'1.5px solid rgba(255,255,255,.85)',borderRadius:32,padding:'44px 52px',textAlign:'center',maxWidth:480,boxShadow:'0 20px 64px rgba(6,182,212,.18)'}}>
               <div style={{display:'flex',justifyContent:'center',gap:3,marginBottom:10}}>
                 {[1,2,3,4,5].map(i=><span key={i} style={{color:'#f59e0b',fontSize:22}}>★</span>)}
               </div>
-              <div style={{fontSize:14,color:'#0e7490',fontWeight:600,marginBottom:24}}>
-                <strong style={{fontSize:19,color:'#0c4a6e'}}>{SITE.rating}</strong> &nbsp;·&nbsp; {SITE.ratingCount} Ratings Combined
-              </div>
-              <h2 style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:'clamp(26px,3vw,42px)',color:'#0c4a6e',lineHeight:1.12,marginBottom:12}}>
-                Maharashtra's Trusted<br/>Cleaning App
+              <h2 style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:'clamp(24px,6vw,42px)',color:'#0c4a6e',lineHeight:1.12,marginBottom:12}}>
+                India's Trusted<br/>Cleaning App
               </h2>
               <p style={{color:'#374151',fontSize:15.5,marginBottom:32,lineHeight:1.75}}>
-                On-demand home services to keep your<br/>house spotless — anytime, anywhere.
+                On-demand home services to keep your house spotless — anytime, anywhere.
               </p>
               <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
                 <button onClick={() => handleApp('play')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',transition:'all .22s',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
@@ -551,9 +679,9 @@ export default function CleanzoWebsite() {
         </section>
 
         {/* FOOTER */}
-        <footer style={{background:'#0c4a6e',padding:'56px 28px 28px'}}>
+        <footer className="footer-pad" style={{background:'#0c4a6e',padding:'56px 28px 28px'}}>
           <div style={{maxWidth:1180,margin:'0 auto'}}>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:40,marginBottom:44}}>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:40,marginBottom:44}}>
               <div>
                 <div style={{marginBottom:16}}>
                   <CleenzoLogo height={30} wordColor="#ffffff" accentColor="#67e8f9" />
@@ -589,7 +717,7 @@ export default function CleanzoWebsite() {
                 ))}
               </div>
             </div>
-            <div style={{borderTop:'1px solid rgba(255,255,255,.08)',paddingTop:22,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12}}>
+            <div className="footer-bottom" style={{borderTop:'1px solid rgba(255,255,255,.08)',paddingTop:22,display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12}}>
               <p style={{fontSize:12,color:'rgba(255,255,255,.3)'}}>{SITE.copyright}</p>
               <p style={{fontSize:12,color:'rgba(255,255,255,.3)'}}>{SITE.footerNote}</p>
             </div>
@@ -600,14 +728,14 @@ export default function CleanzoWebsite() {
       {/* ═══ SERVICES VIEW ═══ */}
       {view === 'services' && (
         <div style={{background:'#fafafa',minHeight:'100vh'}}>
-          <div style={{background:'#fff',borderBottom:'1px solid #f0f0f0',padding:'52px 28px 44px',position:'relative',overflow:'hidden'}}>
+          <div className="svcview-header" style={{background:'#fff',borderBottom:'1px solid #f0f0f0',padding:'52px 28px 44px',position:'relative',overflow:'hidden'}}>
             <div style={{position:'absolute',top:-80,right:-80,width:320,height:320,background:'radial-gradient(circle,rgba(6,182,212,.055) 0%,transparent 70%)',pointerEvents:'none'}}/>
             <div style={{maxWidth:1180,margin:'0 auto',position:'relative',zIndex:1}}>
               <button onClick={goHome} style={{fontSize:13,color:'#06b6d4',background:'none',border:'none',cursor:'pointer',fontWeight:600,display:'inline-flex',alignItems:'center',gap:5,marginBottom:22,fontFamily:"'Outfit',sans-serif",padding:0}}>← Back to home</button>
-              <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:20}}>
+              <div className="svcview-headrow" style={{display:'flex',justifyContent:'space-between',alignItems:'flex-end',flexWrap:'wrap',gap:20}}>
                 <div>
                   <div className="section-eyebrow">All services</div>
-                  <h1 className="section-heading" style={{fontSize:'clamp(34px,5vw,56px)'}}>Book trusted<br/>house help.</h1>
+                  <h1 className="section-heading" style={{fontSize:'clamp(30px,8vw,56px)'}}>Book trusted<br/>house help.</h1>
                   <p style={{color:'#6b7280',marginTop:13,fontSize:15,maxWidth:500}}>{SERVICES.length} services · Transparent flat pricing · Equipment included</p>
                 </div>
                 <div style={{display:'flex',alignItems:'center',gap:9,background:'#f0fdfe',border:'1.5px solid #a5f3fc',borderRadius:16,padding:'11px 18px'}}>
@@ -621,11 +749,11 @@ export default function CleanzoWebsite() {
               </div>
             </div>
           </div>
-          <div style={{maxWidth:1180,margin:'0 auto',padding:'44px 28px 88px'}}>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:18}}>
+          <div className="detail-wrap" style={{maxWidth:1180,margin:'0 auto',padding:'44px 28px 88px'}}>
+            <div className="all-services-grid">
               {SERVICES.map(s => (
                 <div key={s.id} className="svc-card" onClick={() => openDetail(s)}>
-                  <div style={{height:160,overflow:'hidden',position:'relative',background:s.bg}}>
+                  <div className="svc-img-wrap" style={{height:160,overflow:'hidden',position:'relative',background:s.bg}}>
                     <ServiceImage src={s.image} alt={s.name} bg={s.bg} color={s.color}/>
                     {s.popular && <div style={{position:'absolute',top:11,right:11,background:s.color,color:'#fff',fontSize:9,fontWeight:700,padding:'3px 9px',borderRadius:20,letterSpacing:1.2,zIndex:2}}>TOP</div>}
                   </div>
@@ -639,7 +767,7 @@ export default function CleanzoWebsite() {
                 </div>
               ))}
             </div>
-            <div style={{marginTop:64,background:'linear-gradient(135deg,#0c4a6e,#0e7490)',borderRadius:28,padding:'44px 36px',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:24}}>
+            <div className="services-cta-banner" style={{marginTop:64,background:'linear-gradient(135deg,#0c4a6e,#0e7490)',borderRadius:28,padding:'44px 36px',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:24}}>
               <div>
                 <h3 style={{fontSize:22,fontWeight:800,fontFamily:"'Playfair Display',serif",color:'#fff',marginBottom:8}}>Get trusted house help in minutes.</h3>
                 <p style={{fontSize:14,color:'rgba(255,255,255,.65)'}}>Download the Cleenzo app and book your first service today.</p>
@@ -656,7 +784,7 @@ export default function CleanzoWebsite() {
         const others = SERVICES.filter(x=>x.id!==s.id).slice(0,6);
         return (
           <div style={{background:'#fafafa',minHeight:'100vh'}}>
-            <div style={{position:'sticky',top:70,zIndex:50,background:'rgba(255,255,255,.97)',backdropFilter:'blur(16px)',borderBottom:'1px solid #f0f0f0',padding:'12px 28px'}}>
+            <div className="detail-subbar" style={{position:'sticky',top:70,zIndex:50,background:'rgba(255,255,255,.97)',backdropFilter:'blur(16px)',borderBottom:'1px solid #f0f0f0',padding:'12px 28px'}}>
               <div style={{maxWidth:1180,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',gap:14,flexWrap:'wrap'}}>
                 <div style={{display:'flex',alignItems:'center',gap:13}}>
                   <button onClick={goBack} style={{background:'#f0fdfe',border:'1.5px solid #a5f3fc',borderRadius:12,padding:'7px 16px',fontSize:13,color:'#0e7490',cursor:'pointer',fontWeight:600,fontFamily:"'Outfit',sans-serif"}}>← All services</button>
@@ -673,15 +801,15 @@ export default function CleanzoWebsite() {
                 </div>
               </div>
             </div>
-            <div style={{maxWidth:1180,margin:'0 auto',padding:'44px 28px 88px',display:'grid',gridTemplateColumns:'1fr 330px',gap:44,alignItems:'start'}} className="detail-grid">
+            <div className="detail-grid detail-wrap" style={{maxWidth:1180,margin:'0 auto',padding:'44px 28px 88px',display:'grid',gridTemplateColumns:'1fr 330px',gap:44,alignItems:'start'}}>
               <div>
-                <div style={{background:s.bg,borderRadius:28,padding:'48px 40px',marginBottom:44,display:'flex',gap:32,alignItems:'center',flexWrap:'wrap',position:'relative',overflow:'hidden'}}>
+                <div className="detail-hero" style={{background:s.bg,borderRadius:28,padding:'48px 40px',marginBottom:44,display:'flex',gap:32,alignItems:'center',flexWrap:'wrap',position:'relative',overflow:'hidden'}}>
                   <div style={{position:'absolute',top:-40,right:-40,width:180,height:180,background:`${s.color}18`,borderRadius:'50%',pointerEvents:'none'}}/>
                   <div style={{width:110,height:110,borderRadius:22,overflow:'hidden',flexShrink:0,position:'relative',zIndex:1,boxShadow:'0 8px 28px rgba(0,0,0,.12)'}}>
                     <ServiceImage src={s.image} alt={s.name} bg={s.bg} color={s.color}/>
                   </div>
                   <div style={{position:'relative',zIndex:1}}>
-                    <h1 style={{fontSize:'clamp(28px,3.5vw,42px)',fontWeight:800,fontFamily:"'Playfair Display',serif",color:'#0c4a6e',margin:'0 0 11px'}}>{s.name}</h1>
+                    <h1 style={{fontSize:'clamp(26px,7vw,42px)',fontWeight:800,fontFamily:"'Playfair Display',serif",color:'#0c4a6e',margin:'0 0 11px'}}>{s.name}</h1>
                     <p style={{fontSize:16,color:'#374151',marginBottom:18,lineHeight:1.65}}>{s.tagline}</p>
                     <div style={{display:'flex',gap:9,flexWrap:'wrap'}}>
                       <span style={{background:'#fff',border:`1.5px solid ${s.color}`,color:s.color,borderRadius:50,padding:'5px 15px',fontSize:13,fontWeight:600}}>⏱ {s.duration}</span>
@@ -691,7 +819,7 @@ export default function CleanzoWebsite() {
                   </div>
                 </div>
                 <DetailSection title="What's included">
-                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:10}}>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:10}}>
                     {s.includes.map(i => (
                       <div key={i} style={{display:'flex',alignItems:'flex-start',gap:9,background:'#f0fdf4',borderRadius:12,padding:'10px 14px',fontSize:13.5,color:'#374151'}}>
                         <span style={{color:'#10b981',fontWeight:700,flexShrink:0}}>✓</span>{i}
@@ -736,7 +864,7 @@ export default function CleanzoWebsite() {
                   </div>
                 </DetailSection>
                 <DetailSection title="More ways to keep your home clean">
-                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(175px,1fr))',gap:11}}>
+                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:11}}>
                     {others.map(os => (
                       <div key={os.id} className="ocard" onClick={() => openDetail(os)}>
                         <span style={{fontSize:27}}>{os.emoji}</span>
@@ -840,7 +968,8 @@ function CleenzoLogo({
         fontSize={FONT_SIZE}
         letterSpacing="-1.5"
       >
-        <tspan fill={wordColor}>Cleen</tspan>
+        <tspan fill={wordColor} fontSize={FONT_SIZE * 1.24}>C</tspan>
+        <tspan fill={wordColor}>leen</tspan>
         <tspan fill={accentColor}>zo</tspan>
       </text>
 
@@ -852,6 +981,22 @@ function CleenzoLogo({
         />
       </g>
     </svg>
+  );
+}
+
+// ─── OFFER FEATURE (circular outline icon + 2-line label) ─────────────────────
+function OfferFeature({ l1, l2, children }: { l1: string; l2: string; children: ReactNode }) {
+  return (
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:11,width:96}}>
+      <div style={{width:62,height:62,borderRadius:'50%',border:'1.5px solid rgba(255,255,255,0.55)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+          {children}
+        </svg>
+      </div>
+      <div style={{fontSize:11,fontWeight:700,color:'#fff',textAlign:'center',letterSpacing:.4,lineHeight:1.35,textTransform:'uppercase'}}>
+        {l1}<br/>{l2}
+      </div>
+    </div>
   );
 }
 
