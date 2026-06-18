@@ -2,8 +2,27 @@
 
 import { useState } from 'react';
 
+// ─── TYPES ───────────────────────────────────────────────────────────────────
+type TimeEstimate = { task: string; time: string };
+type Faq = { q: string; a: string };
+
+type Service = {
+  id: string;
+  name: string;
+  emoji: string;
+  tagline: string;
+  duration: string;
+  popular: boolean;
+  includes: string[];
+  excludes: string[];
+  timeEstimates: TimeEstimate[];
+  faqs: Faq[];
+  color: string;
+  bg: string;
+};
+
 // ─── DATA ────────────────────────────────────────────────────────────────────
-const SERVICES = [
+const SERVICES: Service[] = [
   {
     id: 'bathroom-cleaning',
     name: 'Bathroom Cleaning',
@@ -77,7 +96,7 @@ const SERVICES = [
     id: 'full-home-cleaning',
     name: 'Full Home Cleaning',
     emoji: '🏠',
-    tagline: 'Every room, every corner — completely refreshed.',  
+    tagline: 'Every room, every corner — completely refreshed.',
     duration: '3–4 hrs',
     popular: true,
     includes: [
@@ -377,7 +396,7 @@ const CITIES = ['Nashik', 'Pune', 'Mumbai', 'Nagpur', 'Aurangabad', 'Kolhapur'];
 
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 export default function ServicesPage() {
-  const [selected, setSelected] = useState<typeof SERVICES[0] | null>(null);
+  const [selected, setSelected] = useState<Service | null>(null);
   const [toast, setToast] = useState('');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [selectedCity, setSelectedCity] = useState('');
@@ -403,7 +422,7 @@ export default function ServicesPage() {
       onBook={handleBook}
       toast={toast}
       allServices={SERVICES}
-      onSelectService={(s) => { setSelected(s); setOpenFaq(null); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+      onSelectService={(s: Service) => { setSelected(s); setOpenFaq(null); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
     />;
   }
 
@@ -492,8 +511,21 @@ export default function ServicesPage() {
 }
 
 // ─── SERVICE DETAIL ───────────────────────────────────────────────────────────
-function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, setSelectedCity, onBook, toast, allServices, onSelectService }: any) {
-  const others = allServices.filter((s: any) => s.id !== service.id).slice(0, 6);
+type ServiceDetailProps = {
+  service: Service;
+  onBack: () => void;
+  openFaq: number | null;
+  setOpenFaq: (i: number | null) => void;
+  selectedCity: string;
+  setSelectedCity: (c: string) => void;
+  onBook: () => void;
+  toast: string;
+  allServices: Service[];
+  onSelectService: (s: Service) => void;
+};
+
+function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, setSelectedCity, onBook, toast, allServices, onSelectService }: ServiceDetailProps) {
+  const others = allServices.filter((s) => s.id !== service.id).slice(0, 6);
 
   return (
     <div style={{ fontFamily: "'DM Sans','Segoe UI',sans-serif", background: '#fafafa', minHeight: '100vh' }}>
@@ -532,7 +564,7 @@ function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, set
             <select value={selectedCity} onChange={e => setSelectedCity(e.target.value)}
               style={{ border: '1.5px solid #a5f3fc', background: '#f0fdfe', borderRadius: 10, padding: '8px 12px', fontSize: 13, color: '#0e7490', fontFamily: "'DM Sans',sans-serif", cursor: 'pointer', outline: 'none' }}>
               <option value="">📍 Select city</option>
-              {['Nashik','Pune','Mumbai','Nagpur','Aurangabad','Kolhapur'].map(c => <option key={c}>{c}</option>)}
+              {CITIES.map(c => <option key={c}>{c}</option>)}
             </select>
             <button className="btn-cy" style={{ padding: '9px 22px', fontSize: 14 }} onClick={onBook}>
               Book now
@@ -568,7 +600,7 @@ function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, set
           {/* What's included */}
           <Section title="What's included">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
-              {service.includes.map((item: string) => (
+              {service.includes.map((item) => (
                 <div key={item} className="check-item" style={{ fontSize: 14, color: '#374151', display: 'flex', alignItems: 'flex-start', background: '#f0fdf4', borderRadius: 10, padding: '10px 14px' }}>
                   <span style={{ color: '#10b981', fontWeight: 700, marginRight: 8, flexShrink: 0 }}>✓</span>
                   {item}
@@ -580,7 +612,7 @@ function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, set
           {/* Not included */}
           <Section title="Does not include">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {service.excludes.map((item: string) => (
+              {service.excludes.map((item) => (
                 <div key={item} style={{ fontSize: 14, color: '#6b7280', display: 'flex', alignItems: 'flex-start', gap: 8 }}>
                   <span style={{ color: '#f87171', fontWeight: 700, flexShrink: 0 }}>✕</span>
                   {item}
@@ -593,7 +625,7 @@ function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, set
           <Section title="How long does it take?">
             <p style={{ fontSize: 13, color: '#9ca3af', marginBottom: 16 }}>Estimations are based on a standard 2BHK.</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 1, border: '1.5px solid #e5e7eb', borderRadius: 16, overflow: 'hidden' }}>
-              {service.timeEstimates.map((t: any, i: number) => (
+              {service.timeEstimates.map((t, i) => (
                 <div key={t.task} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: i % 2 === 0 ? '#fff' : '#fafafa', fontSize: 14 }}>
                   <span style={{ color: '#374151', fontWeight: 500 }}>{t.task}</span>
                   <span style={{ color: '#06b6d4', fontWeight: 600 }}>{t.time}</span>
@@ -604,7 +636,7 @@ function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, set
 
           {/* FAQs */}
           <Section title="Frequently asked questions">
-            {service.faqs.map((faq: any, i: number) => (
+            {service.faqs.map((faq, i) => (
               <div key={i} className="faq-item">
                 <div className="faq-q" onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   style={{ color: '#0c4a6e' }}>
@@ -617,9 +649,9 @@ function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, set
           </Section>
 
           {/* Available cities */}
-          <Section title={`Available in ${['Nashik','Pune','Mumbai','Nagpur','Aurangabad','Kolhapur'].length} Maharashtra cities`}>
+          <Section title={`Available in ${CITIES.length} Maharashtra cities`}>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {['Nashik','Pune','Mumbai','Nagpur','Aurangabad','Kolhapur'].map(city => (
+              {CITIES.map(city => (
                 <span key={city} className="city-chip" onClick={() => setSelectedCity(city)}>{city}</span>
               ))}
             </div>
@@ -628,7 +660,7 @@ function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, set
           {/* Other services */}
           <Section title="More ways to keep your home clean">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))', gap: 12 }}>
-              {others.map((s: any) => (
+              {others.map((s) => (
                 <div key={s.id} className="ocard" onClick={() => onSelectService(s)}>
                   <span style={{ fontSize: 28 }}>{s.emoji}</span>
                   <div>
@@ -653,7 +685,7 @@ function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, set
               <select value={selectedCity} onChange={e => setSelectedCity(e.target.value)}
                 style={{ width: '100%', border: '1.5px solid #e5e7eb', borderRadius: 12, padding: '11px 14px', fontSize: 14, fontFamily: "'DM Sans',sans-serif", color: '#374151', outline: 'none', cursor: 'pointer' }}>
                 <option value="">Select city</option>
-                {['Nashik','Pune','Mumbai','Nagpur','Aurangabad','Kolhapur'].map(c => <option key={c}>{c}</option>)}
+                {CITIES.map(c => <option key={c}>{c}</option>)}
               </select>
             </div>
             <button className="btn-outline" style={{ width: '100%', padding: '12px', fontSize: 14, borderRadius: 14 }}
@@ -668,7 +700,7 @@ function ServiceDetail({ service, onBack, openFaq, setOpenFaq, selectedCity, set
                 ['✅', 'Verified & trained Pros'],
                 ['⏰', 'On-time guarantee'],
               ].map(([icon, label]) => (
-                <div key={label as string} style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10, fontSize: 13, color: '#6b7280' }}>
+                <div key={label} style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10, fontSize: 13, color: '#6b7280' }}>
                   <span>{icon}</span>{label}
                 </div>
               ))}
