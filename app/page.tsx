@@ -1,36 +1,24 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 
 // ─── SITE CONFIG ─────────────────────────────────────────────────────────────
 const SITE = {
   name: 'Cleenzo',
-  tagline: 'Trusted house help in minutes!',
-  subTagline: 'Your home, professionally cleaned — exactly when you need it. Vetted Cleenzo Pros, transparent pricing, no hidden charges.',
-  liveBadge: 'Now live in 6 Maharashtra cities',
+  tagline: 'Clean Home Happy You',
+  subTagline: 'House Help in minutes',
+  liveBadge: 'Now live in Mumbai, Maharashtra',
   rating: '4.8',
   ratingCount: '12,400+',
   footerNote: 'Made with ❤️ in Mumbai, Maharashtra',
   copyright: '© 2026 Cleenzo. All rights reserved.',
-  email: 'hello@cleenzo.in',
-  privacyEmail: 'privacy@cleenzo.in',
+  email: 'gocleenzo@gmail.com',
   playStoreUrl: 'https://play.google.com/store',
   appStoreUrl: 'https://apps.apple.com',
 };
 
-const STATS = [
-  { value: '50,000+', label: 'Happy customers' },
-  { value: '6',       label: 'Cities served' },
-  { value: '4.8 ★',  label: 'Average rating' },
-  { value: '< 2 min', label: 'Avg booking time' },
-];
-
 const CITIES_MAP = {
-  Nashik:     ['Gangapur Road','Cidco','Panchvati','College Road','Satpur','Ambad','Nashik Road','Trimbak Road','Indira Nagar','Deolali'],
-  Pune:       ['Koregaon Park','Baner','Hinjewadi','Kothrud','Wakad','Viman Nagar','Hadapsar','Aundh','Magarpatta','Shivajinagar'],
-  Mumbai:     ['Andheri','Bandra','Powai','Thane','Borivali','Malad','Goregaon','Kandivali','Dadar','Kurla'],
-  Nagpur:     ['Dharampeth','Sitabuldi','Sadar','Civil Lines','Manish Nagar','Wardha Road','Hingna','Pratap Nagar'],
-  Aurangabad: ['Cidco','Garkheda','Waluj','Osmanpura','Cantonment','Hudco','Paithan Road'],
-  Kolhapur:   ['Tarabai Park','Shivaji Peth','Rajarampuri','Kasaba Bawda','Shahupuri'],
+  Mumbai:     ['Andheri','Vile Parle', 'Juhu'],
 };
 
 const SERVICES = [
@@ -108,6 +96,10 @@ const SERVICES = [
     faqs:[{q:'Safe for electronics?',a:'Yes — dry microfibre cloths on electronics. No wet wipes near screens.'}]},
 ];
 
+// Type derived from the SERVICES array — gives every `s` proper types so
+// s.name / s.includes / s.faqs etc. stop erroring as "never".
+type Service = typeof SERVICES[number];
+
 const REVIEWS = [
   { name:'Priya M.',  area:'Gangapur Road, Nashik', text:'Spotless bathroom in under an hour. The pro was polite, on time, and thorough. Absolutely loved the experience!', rating:5, avatar:'PM', color:'#06b6d4' },
   { name:'Rahul S.',  area:'Baner, Pune',           text:'They even cleaned inside the cabinets! Great value, zero hidden charges. Already booked my 3rd session.', rating:5, avatar:'RS', color:'#0891b2' },
@@ -116,9 +108,9 @@ const REVIEWS = [
 ];
 
 const HOW_STEPS = [
-  { n:'01', emoji:'📋', title:'Choose your service',    desc:'Pick from 12 cleaning services. See the exact flat price upfront — no hidden charges ever.' },
-  { n:'02', emoji:'📅', title:'Pick a time slot',       desc:'Instant, scheduled, or recurring. Pay via UPI, card, or wallet in under 60 seconds.' },
-  { n:'03', emoji:'✅', title:'Sit back & relax',       desc:'A verified Cleenzo Pro arrives on time with all equipment. Track them live on the map.' },
+  { n:'01', emoji:'📋', title:'Choose your service',    desc:'Pick from cleaning services. See the exact flat price upfront.' },
+  { n:'02', emoji:'📅', title:'Pick a time slot',       desc:'Instant, scheduled. Pay via UPI or Card.' },
+  { n:'03', emoji:'✅', title:'Sit back & relax',       desc:'A verified Cleenzo Professional arrives on time.' },
 ];
 
 const FAQ_ITEMS = [
@@ -157,16 +149,16 @@ const FAQ_ITEMS = [
 
 export default function CleanzoWebsite() {
   const [view, setView]                       = useState('home');
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedCity, setSelectedCity]       = useState('');
   const [selectedArea, setSelectedArea]       = useState('');
   const [serviceCity, setServiceCity]         = useState('');
-  const [openFaq, setOpenFaq]                 = useState(null);
+  const [openFaq, setOpenFaq]                 = useState<number | null>(null);
   const [toast, setToast]                     = useState('');
   const [mobileOpen, setMobileOpen]           = useState(false);
   const [scrolled, setScrolled]               = useState(false);
   const [faqTab, setFaqTab]                   = useState(0);
-  const [openFaqId, setOpenFaqId]             = useState(null);
+  const [openFaqId, setOpenFaqId]             = useState<string | null>(null);
 
   const CITY_LIST = Object.keys(CITIES_MAP);
 
@@ -176,23 +168,22 @@ export default function CleanzoWebsite() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const showToast  = (msg) => { setToast(msg); setTimeout(() => setToast(''), 3500); };
+  const showToast  = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 3500); };
   const goHome     = () => { setView('home'); setSelectedService(null); window.scrollTo({top:0,behavior:'smooth'}); };
   const goServices = () => { setView('services'); window.scrollTo({top:0,behavior:'smooth'}); };
-  const openDetail = (s) => { setSelectedService(s); setOpenFaq(null); setView('detail'); window.scrollTo({top:0,behavior:'smooth'}); };
+  const openDetail = (s: Service) => { setSelectedService(s); setOpenFaq(null); setView('detail'); window.scrollTo({top:0,behavior:'smooth'}); };
   const goBack     = () => { setView('services'); setSelectedService(null); window.scrollTo({top:0,behavior:'smooth'}); };
-  const scrollTo   = (id) => { goHome(); setTimeout(() => document.getElementById(id)?.scrollIntoView({behavior:'smooth'}), 100); };
+  const scrollTo   = (id: string) => { goHome(); setTimeout(() => document.getElementById(id)?.scrollIntoView({behavior:'smooth'}), 100); };
   const handleBook = () => { if (!serviceCity) { showToast('👆 Select your city first'); return; } showToast(`✅ "${selectedService?.name}" — Download the app to confirm!`); };
-  const handleApp  = (store='play') => {
-    const url = store === 'ios' ? SITE.appStoreUrl : SITE.playStoreUrl;
+  const handleApp  = (store: string = 'play') => {
     showToast("🚀 App launching soon! We'll notify you.");
   };
-  const toggleFaq  = (id) => setOpenFaqId(openFaqId === id ? null : id);
+  const toggleFaq  = (id: string) => setOpenFaqId(openFaqId === id ? null : id);
 
   return (
     <div style={{fontFamily:"'Outfit','DM Sans','Segoe UI',sans-serif",background:'#fff',overflowX:'hidden',minHeight:'100vh'}}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&family=Poppins:ital,wght@1,800;1,900&display=swap');
         *{box-sizing:border-box;margin:0;padding:0;}
         :root{--cy:#06b6d4;--cy2:#0891b2;--cy3:#0e7490;--cy4:#164e63;--cy5:#0c4a6e;--light:#f0fdfe;--light2:#e0f7fa;}
         html{scroll-behavior:smooth;}
@@ -207,8 +198,8 @@ export default function CleanzoWebsite() {
         .a4{animation:fadeUp .7s .46s both}.a5{animation:fadeUp .7s .58s both}
         .float-a{animation:floatA 4s ease-in-out infinite}
         .float-b{animation:floatB 5s ease-in-out infinite 1s}
-        .nav-link{color:#374151;text-decoration:none;font-size:14px;font-weight:500;background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif;padding:0;letter-spacing:.3px;transition:color .15s;}
-        .nav-link:hover{color:var(--cy)}
+        .nav-link{color:#ffffff;text-decoration:none;font-size:16px;font-weight:600;background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif;padding:0;letter-spacing:.2px;transition:opacity .18s,transform .18s;opacity:.92;}
+        .nav-link:hover{opacity:1;transform:translateY(-1px);color:#063b4c}
         .btn-primary{background:var(--cy);color:#fff;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;transition:all .22s;border-radius:50px;letter-spacing:.2px;}
         .btn-primary:hover{background:var(--cy2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(6,182,212,.4);}
         .btn-primary:active{transform:translateY(0);}
@@ -265,7 +256,6 @@ export default function CleanzoWebsite() {
           .detail-sidebar{display:none!important;}
           .nav-desktop{display:none!important;}
           .hamburger{display:flex!important;}
-          .stats-grid{grid-template-columns:repeat(2,1fr)!important;}
           .how-grid{grid-template-columns:1fr!important;}
           .faq-tabs{flex-wrap:wrap!important;}
         }
@@ -280,25 +270,26 @@ export default function CleanzoWebsite() {
       )}
 
       {/* ═══ NAVBAR ═══ */}
-      <nav style={{position:'sticky',top:0,zIndex:100,background:'rgba(255,255,255,.97)',backdropFilter:'blur(20px)',borderBottom:'1px solid #f0f9ff',padding:'0 28px',boxShadow:scrolled?'0 4px 24px rgba(6,182,212,.08)':'none',transition:'box-shadow .3s'}}>
-        <div style={{maxWidth:1180,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',height:70}}>
-          <button onClick={goHome} style={{display:'flex',alignItems:'center',gap:10,background:'none',border:'none',cursor:'pointer',padding:0}}>
-            <div style={{width:38,height:38,background:'linear-gradient(135deg,#06b6d4,#0e7490)',borderRadius:12,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,boxShadow:'0 4px 14px rgba(6,182,212,.3)'}}>🧹</div>
-            <span style={{fontSize:22,fontWeight:800,fontFamily:"'Playfair Display',serif",color:'#0e7490',letterSpacing:'-0.5px'}}>{SITE.name}</span>
+      <nav style={{position:'sticky',top:0,zIndex:100,background:scrolled?'rgba(7,182,213,.95)':'#07B6D5',backdropFilter:'blur(20px)',WebkitBackdropFilter:'blur(20px)',borderBottom:scrolled?'1px solid rgba(255,255,255,.25)':'1px solid rgba(255,255,255,.12)',padding:'0 28px',boxShadow:scrolled?'0 6px 28px rgba(8,80,110,.22)':'none',transition:'box-shadow .3s,background .3s,border-color .3s'}}>
+        <div style={{maxWidth:1180,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',height:72}}>
+          <button onClick={goHome} style={{display:'flex',alignItems:'center',background:'none',border:'none',cursor:'pointer',padding:0}}>
+            <CleenzoLogo height={38} wordColor="#0c4a6e" accentColor="#ffffff" />
           </button>
-          <div className="nav-desktop" style={{display:'flex',gap:36,alignItems:'center'}}>
+          <div className="nav-desktop" style={{display:'flex',gap:40,alignItems:'center'}}>
             <button className="nav-link" onClick={goServices}>Services</button>
             <button className="nav-link" onClick={() => scrollTo('howitworks')}>How it works</button>
             <button className="nav-link" onClick={() => scrollTo('cities')}>Cities</button>
             <button className="nav-link" onClick={() => scrollTo('reviews')}>Reviews</button>
             <button className="nav-link" onClick={() => scrollTo('faq')}>FAQ</button>
           </div>
-          <div className="nav-desktop" style={{display:'flex',gap:10,alignItems:'center'}}>
-            <button className="btn-outline" style={{padding:'8px 20px',fontSize:13}} onClick={() => handleApp('play')}>Get the app</button>
-            <button className="btn-primary" style={{padding:'9px 22px',fontSize:13}} onClick={goServices}>Book now →</button>
+          <div className="nav-desktop" style={{display:'flex',gap:12,alignItems:'center'}}>
+            <button onClick={() => handleApp('play')} style={{padding:'10px 22px',fontSize:15,fontWeight:600,color:'#fff',background:'transparent',border:'2px solid rgba(255,255,255,.7)',borderRadius:50,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all .2s'}}
+              onMouseOver={e=>{e.currentTarget.style.background='rgba(255,255,255,.16)';}} onMouseOut={e=>{e.currentTarget.style.background='transparent';}}>Get the app</button>
+            <button onClick={goServices} style={{padding:'11px 26px',fontSize:15,fontWeight:700,color:'#0e7490',background:'#fff',border:'none',borderRadius:50,cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 18px rgba(0,0,0,.14)',transition:'transform .2s'}}
+              onMouseOver={e=>e.currentTarget.style.transform='translateY(-2px)'} onMouseOut={e=>e.currentTarget.style.transform='translateY(0)'}>Book now →</button>
           </div>
           <button className="hamburger" onClick={() => setMobileOpen(!mobileOpen)}
-            style={{background:'none',border:'none',cursor:'pointer',fontSize:24,color:'#374151',display:'none',alignItems:'center'}}>
+            style={{background:'none',border:'none',cursor:'pointer',fontSize:26,color:'#fff',display:'none',alignItems:'center'}}>
             {mobileOpen ? '✕' : '☰'}
           </button>
         </div>
@@ -316,117 +307,70 @@ export default function CleanzoWebsite() {
       {view === 'home' && <>
 
         {/* HERO */}
-        <section style={{background:'linear-gradient(145deg,#f0fdfe 0%,#e0f7fa 45%,#cff3f9 100%)',padding:'0 28px',overflow:'hidden',minHeight:'92vh',display:'flex',alignItems:'center',position:'relative'}}>
-          <div className="blob" style={{width:500,height:500,background:'#a5f3fc',top:'-120px',right:'-80px'}}/>
-          <div className="blob" style={{width:300,height:300,background:'#67e8f9',bottom:'-60px',left:'10%'}}/>
+        <section style={{background:'linear-gradient(160deg,#eafaff 0%,#d8f3fb 55%,#c4edf7 100%)',padding:'0 28px',overflow:'hidden',minHeight:'92vh',display:'flex',alignItems:'center',position:'relative'}}>
+          <div className="blob" style={{width:520,height:520,background:'#a5f3fc',top:'-140px',right:'-60px'}}/>
+          <div className="blob" style={{width:320,height:320,background:'#67e8f9',bottom:'-80px',left:'6%'}}/>
           <div className="hero-pattern"/>
-          <div style={{maxWidth:1180,margin:'0 auto',width:'100%',display:'grid',gridTemplateColumns:'1.05fr .95fr',gap:48,alignItems:'center',padding:'72px 0',position:'relative',zIndex:1}} className="hero-grid">
-            <div>
-              <div className="a1" style={{display:'inline-flex',alignItems:'center',gap:9,background:'rgba(6,182,212,.13)',border:'1.5px solid rgba(6,182,212,.35)',borderRadius:50,padding:'7px 18px',fontSize:13,color:'#0e7490',fontWeight:600,marginBottom:32}}>
-                <span style={{width:8,height:8,background:'#22c55e',borderRadius:'50%',display:'inline-block',boxShadow:'0 0 0 4px rgba(34,197,94,.25)',animation:'pulse 2s infinite'}}/>
-                {SITE.liveBadge}
-              </div>
-              <h1 className="a2 section-heading" style={{fontSize:'clamp(44px,5.5vw,74px)',marginBottom:22,color:'#0c4a6e'}}>
-                Trusted house<br/>
-                <span style={{background:'linear-gradient(90deg,#06b6d4,#0891b2)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>
-                  help in minutes!
-                </span>
-              </h1>
-              <p className="a3" style={{fontSize:17.5,color:'#374151',lineHeight:1.8,marginBottom:36,maxWidth:500}}>{SITE.subTagline}</p>
-              <div className="a4" style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:32}}>
-                <button className="store-btn" onClick={() => handleApp('play')}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                    <path d="M3 3.5L13.5 12 3 20.5V3.5Z" fill="#4CAF50"/>
-                    <path d="M3 3.5L13.5 12 8.5 17 3 3.5Z" fill="#2196F3"/>
-                    <path d="M13.5 12L21 7.5 16.5 12 21 16.5 13.5 12Z" fill="#FFC107"/>
-                    <path d="M3 20.5L8.5 17 13.5 12 3 20.5Z" fill="#F44336"/>
-                  </svg>
-                  <div style={{textAlign:'left'}}><div style={{fontSize:9.5,opacity:.7,letterSpacing:.8,textTransform:'uppercase'}}>Get it on</div><div style={{fontSize:15,fontWeight:700}}>Google Play</div></div>
-                </button>
-                <button className="store-btn" onClick={() => handleApp('ios')}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                  </svg>
-                  <div style={{textAlign:'left'}}><div style={{fontSize:9.5,opacity:.7,letterSpacing:.8,textTransform:'uppercase'}}>Download on the</div><div style={{fontSize:15,fontWeight:700}}>App Store</div></div>
-                </button>
-              </div>
-              <div className="a4" style={{display:'flex',alignItems:'center',gap:12,marginBottom:36}}>
-                <div style={{display:'flex',gap:1}}>{'★★★★★'.split('').map((s,i)=><span key={i} style={{color:'#f59e0b',fontSize:20}}>{s}</span>)}</div>
-                <span style={{fontSize:16,fontWeight:700,color:'#0c4a6e'}}>{SITE.rating}</span>
-                <span style={{fontSize:13.5,color:'#6b7280'}}>from {SITE.ratingCount} ratings</span>
-              </div>
-              <div className="a5">
-                <p style={{fontSize:11,fontWeight:700,letterSpacing:2.5,color:'#9ca3af',textTransform:'uppercase',marginBottom:12}}>Live in</p>
-                <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-                  {CITY_LIST.slice(0,4).map(c => (
-                    <button key={c} className={`city-pill${selectedCity===c?' active':''}`}
-                      onClick={() => { setSelectedCity(c); setSelectedArea(''); document.getElementById('services')?.scrollIntoView({behavior:'smooth'}); }}>{c}</button>
-                  ))}
-                  <button className="city-pill" onClick={() => document.getElementById('cities')?.scrollIntoView({behavior:'smooth'})}>
-                    + {CITY_LIST.length-4} more →
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="hero-img-col" style={{position:'relative',height:580,display:'flex',alignItems:'center',justifyContent:'center'}}>
-              <div style={{position:'absolute',width:460,height:460,background:'linear-gradient(135deg,rgba(6,182,212,.12),rgba(14,116,144,.08))',borderRadius:'50%'}}/>
-              <div className="float-a" style={{position:'relative',background:'#fff',borderRadius:28,padding:28,boxShadow:'0 28px 80px rgba(6,182,212,.22)',width:310,zIndex:3}}>
-                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
-                  <div>
-                    <div style={{fontSize:11,color:'#9ca3af',marginBottom:3,letterSpacing:.5}}>Booking confirmed</div>
-                    <div style={{fontSize:16,fontWeight:700,color:'#0c4a6e'}}>Bathroom Cleaning</div>
-                  </div>
-                  <div style={{width:46,height:46,background:'#f0fdfe',borderRadius:16,display:'flex',alignItems:'center',justifyContent:'center',fontSize:22}}>🚿</div>
-                </div>
-                <div style={{display:'flex',alignItems:'center',gap:12,padding:'13px 0',borderTop:'1px solid #f0f0f0',borderBottom:'1px solid #f0f0f0',marginBottom:16}}>
-                  <div style={{width:42,height:42,borderRadius:'50%',background:'linear-gradient(135deg,#06b6d4,#0e7490)',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:700,fontSize:14}}>SP</div>
-                  <div>
-                    <div style={{fontSize:13,fontWeight:600,color:'#0c4a6e'}}>Sunita Pawar</div>
-                    <div style={{display:'flex',gap:2,alignItems:'center'}}>
-                      {'★★★★★'.split('').map((s,i)=><span key={i} style={{color:'#f59e0b',fontSize:11}}>{s}</span>)}
-                      <span style={{fontSize:11,color:'#9ca3af',marginLeft:3}}>4.9</span>
-                    </div>
-                  </div>
-                  <div style={{marginLeft:'auto',background:'#f0fdfe',borderRadius:9,padding:'4px 10px',fontSize:11,fontWeight:600,color:'#0e7490'}}>On way →</div>
-                </div>
-                <div style={{display:'flex',justifyContent:'space-between',fontSize:13}}>
-                  <span style={{color:'#6b7280'}}>Gangapur Road, Nashik</span>
-                  <span style={{background:'#0e7490',color:'#fff',borderRadius:20,padding:'2px 10px',fontSize:11,fontWeight:600}}>Live ●</span>
-                </div>
-                <div style={{marginTop:16,background:'#f0f0f0',borderRadius:50,height:6,overflow:'hidden'}}>
-                  <div style={{width:'65%',height:'100%',background:'linear-gradient(90deg,#06b6d4,#0891b2)',borderRadius:50}}/>
-                </div>
-                <div style={{display:'flex',justifyContent:'space-between',marginTop:7,fontSize:10.5,color:'#9ca3af'}}>
-                  <span>Booked</span><span style={{color:'#06b6d4',fontWeight:600}}>On the way</span><span>Arrived</span><span>Done</span>
-                </div>
-              </div>
-              <div className="float-b" style={{position:'absolute',top:55,right:5,background:'#fff',borderRadius:18,padding:'14px 18px',boxShadow:'0 10px 36px rgba(0,0,0,.1)',zIndex:4,minWidth:158}}>
-                <div style={{fontSize:10.5,color:'#9ca3af',marginBottom:4}}>Service rated</div>
-                <div style={{fontSize:13,fontWeight:700,color:'#0c4a6e',marginBottom:7}}>Kitchen Cleaning</div>
-                <div style={{display:'flex',gap:2}}>{'★★★★★'.split('').map((s,i)=><span key={i} style={{color:'#f59e0b',fontSize:16}}>{s}</span>)}</div>
-              </div>
-              <div style={{position:'absolute',bottom:90,left:5,background:'linear-gradient(135deg,#0e7490,#0c4a6e)',borderRadius:18,padding:'14px 18px',boxShadow:'0 10px 36px rgba(14,116,144,.32)',zIndex:4}}>
-                <div style={{fontSize:10.5,color:'rgba(255,255,255,.65)',marginBottom:6}}>Cleenzo Pros nearby</div>
-                <div style={{display:'flex'}}>
-                  {['SP','RK','AM','NJ'].map((init,i)=>(
-                    <div key={i} style={{width:28,height:28,borderRadius:'50%',background:`hsl(${190+i*15},65%,48%)`,border:'2.5px solid #0e7490',display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:'#fff',marginLeft:i?-9:0}}>{init}</div>
-                  ))}
-                </div>
-                <div style={{fontSize:12.5,fontWeight:600,color:'#fff',marginTop:7}}>4 Pros available now</div>
-              </div>
-            </div>
-          </div>
-        </section>
+          <div style={{maxWidth:1180,margin:'0 auto',width:'100%',display:'grid',gridTemplateColumns:'1.02fr .98fr',gap:48,alignItems:'center',padding:'64px 0',position:'relative',zIndex:1}} className="hero-grid">
 
-        {/* STATS */}
-        <section style={{background:'linear-gradient(90deg,#0c4a6e,#0e7490)',padding:'32px 28px'}}>
-          <div style={{maxWidth:1060,margin:'0 auto',display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:16}} className="stats-grid">
-            {STATS.map(s => (
-              <div key={s.label} className="stat-box">
-                <div style={{fontSize:28,fontWeight:800,color:'#fff',fontFamily:"'Playfair Display',serif"}}>{s.value}</div>
-                <div style={{fontSize:13,color:'rgba(255,255,255,.6)',marginTop:5}}>{s.label}</div>
+            {/* LEFT */}
+            <div>
+              <div className="a1" style={{display:'inline-flex',alignItems:'center',gap:9,background:'rgba(6,182,212,.13)',border:'1.5px solid rgba(6,182,212,.35)',borderRadius:50,padding:'8px 20px',fontSize:13.5,color:'#0e7490',fontWeight:700,marginBottom:26,letterSpacing:.3}}>
+                <span style={{width:8,height:8,background:'#22c55e',borderRadius:'50%',display:'inline-block',boxShadow:'0 0 0 4px rgba(34,197,94,.25)',animation:'pulse 2s infinite'}}/>
+                Professional Cleaning Service Company
               </div>
-            ))}
+              <h1 className="a2" style={{fontFamily:"'Outfit',sans-serif",fontWeight:800,fontSize:'clamp(40px,5vw,68px)',lineHeight:1.08,letterSpacing:'-1px',color:'#0c2740',marginBottom:22}}>
+                Clean Home{' '}
+                <span style={{background:'linear-gradient(90deg,#06b6d4,#0891b2)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>Happy You!</span><br/>
+              </h1>
+              <p className="a3" style={{fontSize:17,color:'#475569',lineHeight:1.75,marginBottom:34,maxWidth:480}}>
+                Trusted home cleaning across Mumbai — verified pros, transparent flat pricing, and spotless results. Book in minutes.
+              </p>
+              <div className="a4" style={{display:'flex',gap:14,flexWrap:'wrap',marginBottom:34}}>
+                <button onClick={goServices}
+                  style={{padding:'15px 32px',fontSize:15.5,fontWeight:700,color:'#fff',background:'linear-gradient(135deg,#06b6d4,#0891b2)',border:'none',borderRadius:50,cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 10px 28px rgba(6,182,212,.38)',transition:'transform .2s'}}
+                  onMouseOver={e=>e.currentTarget.style.transform='translateY(-2px)'} onMouseOut={e=>e.currentTarget.style.transform='translateY(0)'}>
+                  Get Started →
+                </button>
+                <button onClick={() => document.getElementById('services')?.scrollIntoView({behavior:'smooth'})}
+                  style={{padding:'15px 30px',fontSize:15.5,fontWeight:600,color:'#0e7490',background:'#fff',border:'2px solid #a5e8f3',borderRadius:50,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all .2s'}}
+                  onMouseOver={e=>{e.currentTarget.style.borderColor='#06b6d4';e.currentTarget.style.transform='translateY(-2px)';}} onMouseOut={e=>{e.currentTarget.style.borderColor='#a5e8f3';e.currentTarget.style.transform='translateY(0)';}}>
+                  Explore Services
+                </button>
+              </div>
+              <div className="a5" style={{display:'flex',alignItems:'center',gap:14}}>
+                <div style={{display:'flex'}}>
+                </div>
+                <div>
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT — model image with floating cards */}
+            <div className="hero-img-col" style={{position:'relative',height:640,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
+              {/* dotted decoration */}
+              <div style={{position:'absolute',top:24,right:4,width:130,height:100,backgroundImage:'radial-gradient(rgba(8,145,178,.35) 2px,transparent 2px)',backgroundSize:'18px 18px',opacity:.6,pointerEvents:'none'}}/>
+              {/* circles sit behind the upper body */}
+              <div style={{position:'absolute',top:40,left:'50%',transform:'translateX(-50%)',width:470,height:470,borderRadius:'50%',background:'linear-gradient(135deg,#22b8e0,#0e7aa0)',boxShadow:'0 30px 80px rgba(14,116,144,.3)'}}/>
+              <div style={{position:'absolute',top:40,left:'50%',transform:'translateX(-50%) scale(1.1)',width:470,height:470,borderRadius:'50%',border:'2px dashed rgba(255,255,255,.45)',pointerEvents:'none'}}/>
+              {/* model image — bigger, anchored to the bottom (drop your photo at /public/hero-model.png) */}
+              <div style={{position:'relative',width:520,height:620,zIndex:2,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
+                <HeroImage src="/hero-model.png" />
+              </div>
+              {/* testimonial card */}
+              <div className="float-a" style={{position:'absolute',bottom:96,left:-12,background:'#fff',borderRadius:18,padding:'16px 18px',boxShadow:'0 16px 44px rgba(6,182,212,.2)',zIndex:5,maxWidth:210}}>
+                <div style={{width:30,height:30,borderRadius:8,background:'#e0f7fa',display:'flex',alignItems:'center',justifyContent:'center',color:'#0891b2',fontWeight:800,fontSize:22,lineHeight:1,marginBottom:8}}>&ldquo;</div>
+                <div style={{fontSize:13,fontWeight:600,color:'#0c4a6e',lineHeight:1.5}}>Best cleaning service for your home and office.</div>
+              </div>
+              {/* reviewer chip */}
+              <div className="float-b" style={{position:'absolute',bottom:40,right:-10,background:'#fff',borderRadius:16,padding:'12px 16px',boxShadow:'0 14px 40px rgba(0,0,0,.12)',zIndex:5,display:'flex',alignItems:'center',gap:10}}>
+                <div style={{width:40,height:40,borderRadius:'50%',background:'linear-gradient(135deg,#06b6d4,#0e7490)',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:700,fontSize:13}}>PM</div>
+                <div>
+                  <div style={{fontSize:13,fontWeight:700,color:'#0c4a6e'}}>Priya M.</div>
+                  <div style={{display:'flex',gap:1}}>{'★★★★★'.split('').map((s,i)=><span key={i} style={{color:'#f59e0b',fontSize:11}}>{s}</span>)}</div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -481,61 +425,6 @@ export default function CleanzoWebsite() {
             </div>
             <div style={{textAlign:'center',marginTop:52}}>
               <button className="btn-primary" style={{padding:'15px 40px',fontSize:15}} onClick={() => handleApp('play')}>Download the app — it's free →</button>
-            </div>
-          </div>
-        </section>
-
-        {/* CITIES */}
-        <section id="cities" style={{padding:'100px 28px',background:'#fafafa'}}>
-          <div style={{maxWidth:960,margin:'0 auto',textAlign:'center'}}>
-            <div className="section-eyebrow">Coverage</div>
-            <h2 className="section-heading" style={{fontSize:'clamp(30px,3.5vw,46px)',marginBottom:14}}>Serving Maharashtra</h2>
-            <p style={{color:'#6b7280',marginBottom:44,fontSize:16}}>Click a city to see the areas we serve</p>
-            <div style={{display:'flex',gap:10,flexWrap:'wrap',justifyContent:'center',marginBottom:32}}>
-              {CITY_LIST.map(city => (
-                <button key={city} className={`city-pill${selectedCity===city?' active':''}`}
-                  onClick={() => { setSelectedCity(selectedCity===city?'':city); setSelectedArea(''); }}>{city}</button>
-              ))}
-            </div>
-            {selectedCity && (
-              <div style={{background:'#fff',border:'1.5px solid #e0f7fa',borderRadius:24,padding:28,animation:'fadeUp .35s ease'}}>
-                <h3 style={{fontSize:15,fontWeight:700,color:'#0e7490',marginBottom:16}}>Areas we serve in {selectedCity}</h3>
-                <div style={{display:'flex',gap:9,flexWrap:'wrap',justifyContent:'center'}}>
-                  {CITIES_MAP[selectedCity].map(area => (
-                    <button key={area}
-                      onClick={() => { setSelectedArea(area); document.getElementById('services')?.scrollIntoView({behavior:'smooth'}); }}
-                      style={{background:selectedArea===area?'#0e7490':'#f0fdfe',color:selectedArea===area?'#fff':'#0e7490',border:`1.5px solid ${selectedArea===area?'#0e7490':'#a5f3fc'}`,borderRadius:50,padding:'7px 18px',fontSize:13,fontWeight:500,cursor:'pointer',transition:'all .15s',fontFamily:"'Outfit',sans-serif"}}>
-                      {area}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* REVIEWS */}
-        <section id="reviews" style={{padding:'100px 28px',background:'#fff',position:'relative',overflow:'hidden'}}>
-          <div style={{position:'absolute',bottom:-60,left:-60,width:300,height:300,background:'radial-gradient(circle,rgba(6,182,212,.055) 0%,transparent 70%)',pointerEvents:'none'}}/>
-          <div style={{maxWidth:1180,margin:'0 auto'}}>
-            <div style={{textAlign:'center',marginBottom:56}}>
-              <div className="section-eyebrow">Customer love</div>
-              <h2 className="section-heading" style={{fontSize:'clamp(30px,3.5vw,46px)'}}>What our customers say</h2>
-            </div>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:24}}>
-              {REVIEWS.map(r => (
-                <div key={r.name} className="review-card">
-                  <div style={{display:'flex',marginBottom:16,gap:2}}>{[1,2,3,4,5].map(i=><span key={i} style={{color:'#f59e0b',fontSize:18}}>★</span>)}</div>
-                  <p style={{fontSize:15,color:'#374151',lineHeight:1.85,marginBottom:22,fontStyle:'italic'}}>"{r.text}"</p>
-                  <div style={{display:'flex',alignItems:'center',gap:13}}>
-                    <div style={{width:44,height:44,borderRadius:'50%',background:`linear-gradient(135deg,${r.color},#0c4a6e)`,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:700,fontSize:13,flexShrink:0}}>{r.avatar}</div>
-                    <div>
-                      <div style={{fontSize:14,fontWeight:700,color:'#0c4a6e'}}>{r.name}</div>
-                      <div style={{fontSize:12,color:'#9ca3af'}}>{r.area}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </section>
@@ -666,9 +555,8 @@ export default function CleanzoWebsite() {
           <div style={{maxWidth:1180,margin:'0 auto'}}>
             <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:40,marginBottom:44}}>
               <div>
-                <div style={{display:'flex',alignItems:'center',gap:9,marginBottom:16}}>
-                  <div style={{width:32,height:32,background:'#06b6d4',borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',fontSize:15}}>🧹</div>
-                  <span style={{fontSize:21,fontWeight:800,color:'#fff',fontFamily:"'Playfair Display',serif"}}>{SITE.name}</span>
+                <div style={{marginBottom:16}}>
+                  <CleenzoLogo height={30} wordColor="#ffffff" accentColor="#67e8f9" />
                 </div>
                 <p style={{fontSize:13,color:'rgba(255,255,255,.45)',lineHeight:1.9}}>Trusted home cleaning across Maharashtra. Vetted pros, transparent pricing.</p>
                 <p style={{fontSize:13,color:'rgba(255,255,255,.35)',marginTop:12}}>{SITE.email}</p>
@@ -891,7 +779,83 @@ export default function CleanzoWebsite() {
   );
 }
 
-function DetailSection({ title, children }) {
+// ─── CLEENZO LOGO (pure code — no PNG) ────────────────────────────────────────
+//  "Cleen" -> wordColor   |   "z" + "o" -> accentColor
+//  custom "o" = open ring (the CUT) + a 4-point sparkle (the STAR)
+//  Navbar (light bg): wordColor navy,  accentColor white
+//  Footer (dark bg):  wordColor white, accentColor cyan
+function CleenzoLogo({
+  height = 30,
+  wordColor = '#0c4a6e',
+  accentColor = '#ffffff',
+  fontFamily = "'Poppins','Outfit',sans-serif",
+}: {
+  height?: number;
+  wordColor?: string;
+  accentColor?: string;
+  fontFamily?: string;
+}) {
+  const VB_H = 80;
+  const FONT_SIZE = 60;
+  const X0 = 4;          // left padding
+  const BASELINE = 58;   // text baseline
+
+  const textRef = useRef<SVGTextElement>(null);
+  // measured full width of "Cleenzo" — used to place the sparkle over the "o"
+  const [w, setW] = useState(232);
+
+  useEffect(() => {
+    const measure = () => {
+      const el = textRef.current;
+      if (el) setW(el.getComputedTextLength());
+    };
+    measure();
+    // re-measure once the web font has finished loading
+    const fonts = (document as unknown as { fonts?: { ready?: Promise<unknown> } }).fonts;
+    if (fonts?.ready) fonts.ready.then(measure).catch(() => {});
+  }, []);
+
+  const VB_W = X0 + w + 26;       // room for the sparkle on the right
+  const sparkleX = X0 + w - 4;    // upper-RIGHT of the final "o"
+  const sparkleY = 12;            // raised above the letters
+
+  return (
+    <svg
+      role="img"
+      aria-label="Cleenzo"
+      height={height}
+      width={height * (VB_W / VB_H)}
+      viewBox={`0 0 ${VB_W} ${VB_H}`}
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ display: 'block' }}
+    >
+      {/* full wordmark — "Cleen" in wordColor, "zo" in accentColor */}
+      <text
+        ref={textRef}
+        x={X0}
+        y={BASELINE}
+        fontFamily={fontFamily}
+        fontWeight={800}
+        fontStyle="italic"
+        fontSize={FONT_SIZE}
+        letterSpacing="-1.5"
+      >
+        <tspan fill={wordColor}>Cleen</tspan>
+        <tspan fill={accentColor}>zo</tspan>
+      </text>
+
+      {/* 4-point sparkle / star over the top-right of the "o" */}
+      <g transform={`translate(${sparkleX} ${sparkleY}) scale(1.25)`}>
+        <path
+          d="M0,-9 C1.2,-3 3,-1.2 9,0 C3,1.2 1.2,3 0,9 C-1.2,3 -3,1.2 -9,0 C-3,-1.2 -1.2,-3 0,-9 Z"
+          fill={accentColor}
+        />
+      </g>
+    </svg>
+  );
+}
+
+function DetailSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div style={{marginBottom:44}}>
       <h2 style={{fontSize:20,fontWeight:800,fontFamily:"'Playfair Display',serif",color:'#0c4a6e',marginBottom:18,paddingBottom:13,borderBottom:'1.5px solid #f0f0f0'}}>
@@ -899,6 +863,32 @@ function DetailSection({ title, children }) {
       </h2>
       {children}
     </div>
+  );
+}
+
+// ─── HERO IMAGE (your photo, with placeholder fallback) ──────────────────────
+function HeroImage({ src }: { src: string }) {
+  const [err, setErr] = useState(false);
+  if (err) {
+    return (
+      <div style={{width:'100%',height:'100%',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:14,textAlign:'center',padding:24}}>
+        <svg width="130" height="130" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.9)" strokeWidth="1.3">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+        <div style={{fontSize:13.5,fontWeight:600,color:'rgba(255,255,255,.95)',lineHeight:1.6,maxWidth:230}}>
+          Add your hero photo at <span style={{background:'rgba(255,255,255,.2)',padding:'2px 7px',borderRadius:6,fontFamily:'monospace'}}>/public/hero-model.png</span>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <img
+      src={src}
+      alt="Cleenzo cleaning professional"
+      onError={() => setErr(true)}
+      style={{maxWidth:'100%',maxHeight:'100%',objectFit:'contain',display:'block',filter:'drop-shadow(0 22px 34px rgba(0,0,0,.22))'}}
+    />
   );
 }
 

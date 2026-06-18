@@ -90,9 +90,9 @@ export default function ContactPage() {
           </p>
           <div style={{ display:'flex',flexDirection:'column',gap:14,marginBottom:44 }}>
             {[
-              { icon:'📧', label:'Email us',  value:'hello@cleenzo.in',       sub:'We reply within 24 hours' },
-              { icon:'📞', label:'Call us',   value:'+91 98765 43210',        sub:'Mon–Sat, 9 AM – 7 PM' },
-              { icon:'📍', label:'Based in',  value:'Mumbai, Maharashtra',    sub:'Serving 6 cities across Maharashtra' },
+              { icon:'📧', label:'Email us',  value:'gocleenzo@gmailcom',       sub:'We reply within 24 hours' },
+              { icon:'📞', label:'Call us',   value:'+91 97027 28298' },
+              { icon:'📍', label:'Based in',  value:'Mumbai, Maharashtra'},
             ].map(item => (
               <div key={item.label} className="info-card">
                 <div style={{ width:44,height:44,background:'#fff',borderRadius:12,display:'flex',alignItems:'center',justifyContent:'center',fontSize:20,flexShrink:0,boxShadow:'0 2px 8px rgba(6,182,212,.12)' }}>{item.icon}</div>
@@ -107,7 +107,7 @@ export default function ContactPage() {
           <div>
             <div style={{ fontSize:13,fontWeight:700,color:'#374151',marginBottom:12,letterSpacing:.5 }}>We currently serve</div>
             <div style={{ display:'flex',gap:8,flexWrap:'wrap' }}>
-              {['Nashik','Pune','Mumbai','Nagpur','Aurangabad','Kolhapur'].map(city => (
+              {['Mumbai'].map(city => (
                 <span key={city} style={{ background:'#f0fdfe',border:'1.5px solid #a5f3fc',color:'#0e7490',borderRadius:50,padding:'6px 16px',fontSize:13,fontWeight:500 }}>{city}</span>
               ))}
             </div>
