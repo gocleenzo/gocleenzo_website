@@ -182,13 +182,13 @@ export default function CleanzoWebsite() {
   const toggleFaq  = (id: string) => setOpenFaqId(openFaqId === id ? null : id);
 
   return (
-    <div style={{fontFamily:"'Outfit','DM Sans','Segoe UI',sans-serif",background:'#fff',overflowX:'hidden',minHeight:'100vh'}}>
+    <div style={{fontFamily:"'Outfit','DM Sans','Segoe UI',sans-serif",background:'#fff',minHeight:'100vh'}}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700;800&family=Poppins:ital,wght@1,800;1,900&display=swap');
         *{box-sizing:border-box;margin:0;padding:0;}
         :root{--cy:#06b6d4;--cy2:#0891b2;--cy3:#0e7490;--cy4:#164e63;--cy5:#0c4a6e;--light:#f0fdfe;--light2:#e0f7fa;}
-        html{scroll-behavior:smooth;}
-        body{font-family:'Outfit',sans-serif;}
+        html{scroll-behavior:smooth;overflow-x:clip;}
+        body{font-family:'Outfit',sans-serif;overflow-x:clip;}
         @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
         @keyframes floatA{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
         @keyframes floatB{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
@@ -651,8 +651,7 @@ export default function CleanzoWebsite() {
               <div style={{display:'flex',justifyContent:'center',gap:3,marginBottom:10}}>
                 {[1,2,3,4,5].map(i=><span key={i} style={{color:'#f59e0b',fontSize:22}}>★</span>)}
               </div>
-              <h2 style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:'clamp(24px,6vw,42px)',color:'#0c4a6e',lineHeight:1.12,marginBottom:12}}>
-                India's Trusted<br/>Cleaning App
+              <h2 style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:'clamp(24px,6vw,42px)',color:'#0c4a6e',lineHeight:1.12,marginBottom:12}}> India's Trusted<br/>Cleaning App
               </h2>
               <p style={{color:'#374151',fontSize:15.5,marginBottom:32,lineHeight:1.75}}>
                 On-demand home services to keep your house spotless — anytime, anywhere.
@@ -968,7 +967,7 @@ function CleenzoLogo({
         fontSize={FONT_SIZE}
         letterSpacing="-1.5"
       >
-        <tspan fill={wordColor} fontSize={FONT_SIZE * 1.24}>C</tspan>
+        <tspan fill={wordColor}>C</tspan>
         <tspan fill={wordColor}>leen</tspan>
         <tspan fill={accentColor}>zo</tspan>
       </text>
