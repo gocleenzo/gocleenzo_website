@@ -346,8 +346,6 @@ export default function CleanzoWebsite() {
           <div className="nav-desktop" style={{display:'flex',gap:40,alignItems:'center'}}>
             <button className="nav-link" onClick={goServices}>Services</button>
             <button className="nav-link" onClick={() => scrollTo('howitworks')}>How it works</button>
-            <button className="nav-link" onClick={() => scrollTo('cities')}>Cities</button>
-            <button className="nav-link" onClick={() => scrollTo('reviews')}>Reviews</button>
             <button className="nav-link" onClick={() => scrollTo('faq')}>FAQ</button>
           </div>
           <div className="nav-desktop" style={{display:'flex',gap:12,alignItems:'center'}}>
