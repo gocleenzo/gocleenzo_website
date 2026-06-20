@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { ReactNode } from 'react';
 
 // ─── SITE CONFIG ─────────────────────────────────────────────────────────────
@@ -22,90 +22,89 @@ const CITIES_MAP = {
 };
 
 const SERVICES = [
-  { id:'bathroom-cleaning', image:'/services/bathroom-cleaning.png',  name:'Bathroom Cleaning',  emoji:'🚿', duration:'40–60 min', popular:true,  bg:'#e0f7fa', color:'#06b6d4',
+  { id:'bathroom-cleaning', image:'/services/bathroom-cleaning.png',  name:'Bathroom Cleaning',  emoji:'🚿', duration:'40–60 min',  bg:'#e0f7fa', color:'#06b6d4',
     tagline:'Deep-clean your bathroom in under an hour.',
-    includes:['Toilet bowl, seat & exterior scrub','Sink, tap & mirror polish','Floor tiles scrubbing & mopping','Wall tiles wipe-down','Dustbin cleaning','Exhaust fan exterior wipe'],
-    excludes:['Shower cubicle glass deep-clean','Bathtub scrubbing','Dry wiping of walls'],
+    includes:['Cleaning of toilet bowl, seat, and rim', 'Cleaning of washbasin and faucet', 'Wiping of bathroom tiles and visible surfaces', 'Cleaning of taps and bathroom fixtures', 'Sweeping and mopping of bathroom floor', 'Final wipe-down and deodorizing', 'Basic stain removal', 'Dust removal from visible corners'],
+    excludes:['Deep grout restoration', 'Heavy hard-water stain removal', 'Acid treatment for extreme scaling', 'Drain unclogging/plumbing work', 'Cleaning inside storage cabinets', 'Removal of construction debris', 'Shifting heavy bathroom items'],
     timeEstimates:[{task:'Toilet deep clean',time:'15 min'},{task:'Sink & mirror',time:'10 min'},{task:'Floor scrubbing',time:'15 min'},{task:'Wall tiles wipe',time:'10 min'}],
     faqs:[{q:'Do I need to provide cleaning supplies?',a:'No. Our Cleenzo Pros bring all equipment and products — everything included.'},{q:'How often should I book?',a:'Once a week for daily-use bathrooms, fortnightly for guest bathrooms.'},{q:'What if I am not satisfied?',a:'Free re-clean within 24 hours if you are not happy with the result.'}]},
-  { id:'kitchen-cleaning', image:'/services/kitchen-cleaning.png',   name:'Kitchen Cleaning',   emoji:'🍳', duration:'60–90 min', popular:true,  bg:'#fff7ed', color:'#f97316',
+  { id:'kitchen-cleaning', image:'/services/kitchen-cleaning.png',   name:'Kitchen Cleaning',   emoji:'🍳', duration:'60–90 min',  bg:'#fff7ed', color:'#f97316',
     tagline:'A grease-free kitchen that feels brand new.',
-    includes:['Countertop wipe and sanitise','Stovetop & burner scrub','Chimney exterior wipe','Sink deep clean & polish','Cabinet exterior wipe','Floor mopping','Dustbin sanitise'],
-    excludes:['Interior cabinet cleaning','Refrigerator cleaning','Utensils washing','Chimney interior cleaning'],
+    includes:['Wiping and cleaning of kitchen countertops and slabs', 'Cleaning exterior surfaces of upper and lower kitchen cabinets', 'Cleaning exterior surfaces of cooking stove including burners, knobs, and drip trays', 'Wiping visible kitchen wall tiles and backsplash areas', 'Cleaning exterior surfaces of sink and faucet', 'Basic removal of visible grease, dust, and food residue from accessible surfaces'],
+    excludes:['Washing, soaking, or arranging utensils and dishes', 'Rearranging or organizing utensils inside cabinets', 'Garbage disposal or removal of kitchen waste', 'Cleaning interiors of chimneys, microwaves, refrigerators, ovens, or air fryers', 'Deep grease removal or stain restoration', 'Interior cleaning of cabinets or drawers', 'Appliance repair or servicing'],
     timeEstimates:[{task:'Countertop & stovetop',time:'20 min'},{task:'Sink deep clean',time:'15 min'},{task:'Cabinet exterior',time:'15 min'},{task:'Floor mopping',time:'10 min'}],
     faqs:[{q:'Is the chimney interior included?',a:'No — we clean only the exterior surfaces.'},{q:'Will you wash utensils?',a:'Utensil washing is a separate service.'}]},
-  { id:'full-home-cleaning', image:'/services/full-home-cleaning.png', name:'Full Home Cleaning', emoji:'🏠', duration:'3–4 hrs',   popular:true,  bg:'#f5f3ff', color:'#8b5cf6',
+  { id:'full-home-cleaning', image:'/services/full-home-cleaning.png', name:'Full Home Cleaning', emoji:'🏠', duration:'3–4 hrs',   bg:'#f5f3ff', color:'#8b5cf6',
     tagline:'Every room, every corner — completely refreshed.',
     includes:['All rooms swept & mopped','Dusting of all surfaces & furniture','Bathroom surface clean','Kitchen surface clean','Balcony sweep','Ceiling fan exterior wipe','Sofa exterior vacuum'],
     excludes:['Interior cabinet / wardrobe cleaning','Window glass deep-clean','Fridge / AC cleaning','Utensil washing'],
     timeEstimates:[{task:'Sweeping all rooms',time:'40 min'},{task:'Mopping all rooms',time:'30 min'},{task:'Bathroom clean',time:'30 min'},{task:'Kitchen surfaces',time:'30 min'},{task:'Dusting & fans',time:'30 min'}],
     faqs:[{q:'How many Pros come?',a:'For 2BHK and above we send 2 Pros. For 1BHK, 1 Pro is sufficient.'},{q:'How often?',a:'Monthly for maintenance, or before/after a special event.'}]},
-  { id:'sweeping-mopping', image:'/services/sweeping-mopping.png',   name:'Sweeping & Mopping', emoji:'🧹', duration:'30–45 min', popular:false, bg:'#f0fdf4', color:'#10b981',
+  { id:'sweeping-mopping', image:'/services/sweeping-mopping.png',   name:'Sweeping & Mopping', emoji:'🧹', duration:'30–45 min', bg:'#f0fdf4', color:'#10b981',
     tagline:'Fresh floors every single day.',
-    includes:['All rooms swept','Wet mopping with floor cleaner','Balcony & passage sweep','Dustbin emptying'],
-    excludes:['Deep scrubbing of tiles','Furniture moving','Bathroom or kitchen cleaning'],
+    includes:['Sweeping and mopping of floors in selected rooms', 'Removal of visible dust, dirt, and loose debris from floor surfaces', 'Cleaning of accessible corners and edges', 'Slight movement of lightweight movable items for cleaning access', 'Final floor wipe for a neat and refreshed appearance'],
+    excludes:['Sweeping or mopping of balconies, terraces, or outdoor areas', 'Deep stain removal, floor scrubbing, or polishing', 'Moving heavy furniture such as beds, sofas, or cupboards', 'Vacuum cleaning of carpets or rugs', 'Cleaning of walls, furniture, or windows', 'Construction dust or renovation debris cleanup'],
     timeEstimates:[{task:'Sweeping all rooms',time:'20 min'},{task:'Wet mopping',time:'20 min'}],
     faqs:[{q:'Good for daily bookings?',a:'Yes! Our most popular daily service. Many customers book every morning.'}]},
-  { id:'sofa-cleaning', image:'/services/sofa-cleaning.png',      name:'Sofa Cleaning',      emoji:'🛋️', duration:'1–2 hrs',   popular:false, bg:'#fdf2f8', color:'#ec4899',
-    tagline:'Refresh your sofa — remove stains, dust & odour.',
-    includes:['Full vacuum of all cushions & crevices','Fabric stain pre-treatment','Wet extraction clean','Cushion flipping & reshaping','Odour neutraliser spray'],
-    excludes:['Leather sofa conditioning','Structural repair','Complete reupholstering'],
+  { id:'Utnesils-cleaning', image:'/services/Utensils-cleaning.png',      name:'Utensils Cleaning',      emoji:'🛋️', duration:'1–2 hrs', bg:'#fdf2f8', color:'#ec4899',
+    tagline:'Sparkling clean utensils, ready to use.',
+    includes:['Washing utensils using customer-provided cleaning supplies', 'Cleaning plates, cookware, glasses, and daily-use utensils', 'Drying and arranging utensils in rack/sink area', 'Cleaning sink and immediate surrounding area after completion', 'Basic oil and food residue removal'],
+    excludes:['Cleaning kitchen slabs, countertops, or tiles', 'Garbage disposal or waste removal', 'Deep cleaning of burnt or heavily carbonized utensils', 'Chimney, stove, or appliance cleaning', 'Rust removal or metal polishing', 'Cleaning inside cabinets or storage areas'],
     timeEstimates:[{task:'Vacuum & prep',time:'20 min'},{task:'Stain treatment',time:'20 min'},{task:'Deep clean & dry',time:'40 min'}],
     faqs:[{q:'Will my sofa be wet after?',a:'Slight moisture — keep ventilated for 2–3 hours after cleaning.'},{q:'All sofa types?',a:'Yes — fabric, velvet, microfibre. Leather needs a separate service.'}]},
-  { id:'balcony-cleaning', image:'/services/balcony-cleaning.png',   name:'Balcony Cleaning',   emoji:'🌿', duration:'30–45 min', popular:false, bg:'#f0fdfe', color:'#06b6d4',
+  { id:'balcony-cleaning', image:'/services/balcony-cleaning.png',   name:'Balcony Cleaning',   emoji:'🌿', duration:'30–45 min', bg:'#f0fdfe', color:'#06b6d4',
     tagline:"A spotless outdoor space you'll love spending time in.",
-    includes:['Floor sweep & scrub','Railing wipe-down','Wall surface wipe','Removal of cobwebs','Drain unclogging'],
-    excludes:['Plant care & re-potting','Outdoor furniture deep clean','External window glass'],
+    includes:['Sweeping and mopping of balcony floor area', 'Cleaning and wiping of balcony railings, grills, and accessible metal surfaces', 'Cleaning and wiping of balcony parapet or parapet wall', 'Dusting of accessible balcony surfaces including light tables or chairs (if reachable and movable)', 'Removal of visible dust, dirt, and loose debris from accessible areas'],
+    excludes:['Cleaning of balcony walls, ceiling, or overhead fixtures', 'Watering plants, gardening, or plant care services', 'Cleaning of terraces, rooftops, or exterior building walls', 'Moving heavy furniture, storage units, or large plant pots', 'Deep stain removal, pressure washing, or floor scrubbing', 'Pigeon waste, biohazard cleanup, or pest removal', 'Cleaning outside the balcony safety boundary'],
     timeEstimates:[{task:'Sweep & scrub floor',time:'20 min'},{task:'Railing & walls',time:'15 min'}],
     faqs:[{q:'Outdoor furniture?',a:'Light wipe-down included. Deep furniture cleaning is a separate add-on.'}]},
-  { id:'fan-cleaning', image:'/services/fan-cleaning.png',       name:'Fan Cleaning',       emoji:'🌀', duration:'15–20 min', popular:false, bg:'#f0f9ff', color:'#0ea5e9',
+  { id:'fan-cleaning', image:'/services/fan-cleaning.png',       name:'Fan Cleaning',       emoji:'🌀', duration:'15–20 min', bg:'#f0f9ff', color:'#0ea5e9',
     tagline:'Dusty fans cleaned safely — no ladder needed.',
-    includes:['Each blade wiped with damp cloth','Motor housing dusted','Regulator panel wiped','All dust collected & disposed'],
-    excludes:['Exhaust fan interior','Electrical repairs','AC fan cleaning'],
+    includes:['Dust removal from fan blades and motor body (exterior surfaces only)', 'Wiping and cleaning of fan blades and accessible parts', 'Removal of visible dust buildup from reachable areas', 'Cleaning of fallen dust from surrounding floor area after service', 'Basic exterior cleaning for improved appearance and hygiene'],
+    excludes:['Cleaning of room furniture, walls, ceilings, or other surfaces', 'Cleaning of fans requiring unsafe access or unstable ladder setup', 'Fan disassembly or internal motor cleaning', 'Cleaning of dismantled internal fan components', 'Cleaning of exhaust fans, pedestal fans, table fans, or tower fans', 'Moving heavy furniture to access the fan', 'Electrical repair, servicing, or wiring work'],
     timeEstimates:[{task:'Per ceiling fan',time:'15 min'}],
     faqs:[{q:'Do you bring a ladder?',a:'Yes, our Pros carry their own step-ladder.'},{q:'Pricing?',a:'Base covers up to 2 fans. Additional fans at extra cost.'}]},
-  { id:'window-cleaning', image:'/services/window-cleaning.png',    name:'Window Cleaning',    emoji:'🪟', duration:'45–60 min', popular:false, bg:'#f0f9ff', color:'#38bdf8',
-    tagline:'Crystal-clear windows, streak-free guaranteed.',
-    includes:['Interior glass pane clean','Window frame & sill wipe','Streak-free squeegee finish','Removal of cobwebs from frames'],
-    excludes:['Exterior glass above ground floor','Grill / mesh cleaning','Window AC unit'],
+  { id:'kitchen-cabinet-cleaning', image:'/services/cabinet.png',    name:'Kitchen Cabinet Cleaning',    emoji:'🪟', duration:'45–60 min', bg:'#f0f9ff', color:'#38bdf8',
+    tagline:'Fresh, organized cabinets free of dust and grime.',
+    includes:['Exterior cleaning of kitchen cabinet surfaces', 'Interior cleaning of shelves, compartments, and accessible corners', 'Dry and wet wiping of cabinet surfaces', 'Emptying cabinet contents for cleaning access', 'Neat rearranging of cabinet items after cleaning', 'Air drying of cabinet shelves before placing items back', 'Removal of visible dust, crumbs, and light residue'],
+    excludes:['Deep oil, grease, or sticky residue removal', 'Washing utensils, containers, or food items', 'Cabinet repair, repainting, or hardware fixing', 'Removal of cement, rust, or permanent stains', 'Pest control, termite treatment, or Mold restoration', 'Cleaning inside sealed or inaccessible areas'],
     timeEstimates:[{task:'Per window (interior)',time:'8–10 min'}],
     faqs:[{q:'Exterior windows?',a:'Safety reasons — interior only. Exterior above ground floor not included.'}]},
-  { id:'laundry', image:'/services/laundry.png',            name:'Laundry',            emoji:'👕', duration:'45–60 min', popular:false, bg:'#f5f3ff', color:'#a78bfa',
-    tagline:'Clothes washed, dried and ready to wear.',
-    includes:['Sorting by colour','Machine wash with detergent','Hang dry or tumble dry','Basic fold & stack'],
-    excludes:['Ironing','Dry-clean garments','Hand-wash only delicates'],
+  { id:'wardrobe cleaning', image:'/services/wardrobe.png',            name:'Wadrobe Cleaning',            emoji:'👕', duration:'45–60 min', bg:'#f5f3ff', color:'#a78bfa',
+    tagline:'A fresh, dust-free wardrobe inside and out.',
+    includes:['Dry dusting of wardrobe interiors and shelves', 'Interior surface cleaning and wiping', 'Emptying wardrobe items carefully for cleaning access', 'Rearranging items neatly after service', 'Cleaning wardrobe handles, corners, and edges', 'Air drying of cleaned surfaces before arranging items back'],
+    excludes:['Cleaning or washing clothes and personal items', 'Ironing or folding services', 'Polish treatment for wardrobe exterior surfaces', 'Removal of permanent stains or Mold damage', 'Organising based on categories, labels, or styling', 'Moving heavy furniture or attached wardrobes', 'Pest control or termite treatment'],
     timeEstimates:[{task:'Sorting & loading',time:'15 min'},{task:'Machine wash cycle',time:'40–60 min'},{task:'Dry & fold',time:'20 min'}],
     faqs:[{q:'Do you bring detergent?',a:'Yes. Or leave yours out and we use it.'},{q:'Ironing included?',a:'No — book Ironing & Folding separately.'}]},
-  { id:'fridge-cleaning', image:'/services/fridge-cleaning.png',    name:'Fridge Cleaning',    emoji:'🧊', duration:'45–60 min', popular:false, bg:'#f0fdfe', color:'#06b6d4',
+  { id:'fridge-cleaning', image:'/services/fridge-cleaning.png',    name:'Fridge Cleaning',    emoji:'🧊', duration:'45–60 min', bg:'#f0fdfe', color:'#06b6d4',
     tagline:'A hygienic, odour-free fridge inside and out.',
-    includes:['All shelves & drawers removed & cleaned','Interior wall wipe-down & sanitise','Door seal & gasket cleaning','Exterior surfaces wiped','Drip tray cleaned','Odour neutraliser applied'],
-    excludes:['Coil or compressor cleaning','Electrical repair','Freezer defrosting'],
+    includes:['Cleaning of one refrigerator unit only', 'Removing food items and placing them safely aside', 'Discarding expired or spoiled items (only as instructed by customer)', 'Cleaning shelves, trays, drawers, and compartments', 'Wiping interior surfaces including walls, door panels, and rubber lining', 'Basic deodorising of refrigerator interior', 'Cleaning refrigerator exterior (front and visible side surfaces only)', 'Drying surfaces before placing items back', 'Replacing food items neatly into the refrigerator'],
+    excludes:['Moving or lifting the refrigerator', 'Cleaning rear panel, compressor, or condenser coils', 'Refrigerator repair or servicing', 'Handling excessive ice buildup requiring long defrosting time', 'Deep stain restoration caused by long-term neglect', 'Use of industrial-grade chemicals or specialised deodorising treatments', 'Food organisation, expiry labelling, or diet-based arrangement', 'Deep freezer cleaning', 'Handling raw meat or unhygienic food waste due to hygiene and safety concerns'],
     timeEstimates:[{task:'Empty & shelf soak',time:'15 min'},{task:'Interior wipe & sanitise',time:'25 min'},{task:'Reassemble & exterior',time:'10 min'}],
     faqs:[{q:'Empty fridge first?',a:'Yes please — empty before Pro arrives so they start immediately.'}]},
-  { id:'ironing-folding', image:'/services/ironing-folding.png',    name:'Ironing & Folding',  emoji:'👔', duration:'30 min/10', popular:false, bg:'#fffbeb', color:'#f59e0b',
-    tagline:'Crisp, wrinkle-free clothes — every time.',
-    includes:['Steam or dry ironing per garment','Proper fold and stack','Hanging of formal wear','Collar & sleeve pressing'],
-    excludes:['Dry-clean only garments','Washing','Wardrobe organisation'],
-    timeEstimates:[{task:'Per shirt / top',time:'4–5 min'},{task:'Per trouser / salwar',time:'5–6 min'},{task:'Per saree / dupatta',time:'8–10 min'}],
-    faqs:[{q:'Do you bring an iron?',a:'Yes, Pros carry their own steam iron.'}]},
-  { id:'dusting-wiping', image:'/services/dusting-wiping.png',     name:'Dusting & Wiping',   emoji:'🪣', duration:'30–45 min', popular:false, bg:'#f0fdf4', color:'#10b981',
+  { id:'dusting-wiping', image:'/services/dusting-wiping.png',     name:'Dusting & Wiping',   emoji:'🪣', duration:'30–45 min',bg:'#f0fdf4', color:'#10b981',
     tagline:'Every surface dust-free and gleaming.',
-    includes:['All furniture & shelf dusting','TV & electronics exterior wipe','Door & window frame dusting','Light switches & sockets wipe','Ceiling corner cobweb removal'],
-    excludes:['Inside drawers or cabinets','Book shelf organisation','Window glass cleaning'],
+    includes:['Dry dusting of furniture surfaces, tables, shelves, and accessible areas', 'Dust removal from corners and reachable surfaces', 'Exterior dusting of light fixtures, bulbs, and tube lights', 'Dusting of electrical switches and plug points', 'Minor bed adjustment for dusting underneath (only if easily movable)', 'Basic dry wiping of visible surfaces using microfiber cloths', 'Rearranging lightweight items after cleaning'],
+    excludes:['Dusting or cleaning of ceiling fans', 'Cleaning of windows, window glass, or window sills', 'Dusting in balcony, terrace, or outdoor areas', 'Wet cleaning, polishing, or stain removal on furniture', 'Cleaning of electrical appliance interiors', 'Moving heavy furniture or appliances', 'Deep cleaning of wardrobes or storage spaces'],
     timeEstimates:[{task:'Furniture dusting',time:'20 min'},{task:'Electronics & doors',time:'15 min'}],
     faqs:[{q:'Safe for electronics?',a:'Yes — dry microfibre cloths on electronics. No wet wipes near screens.'}]},
+    { id:'Pre-party Cleaning', image:'/services/pre.png',    name:'Pre-party Cleaning',  emoji:'👔', duration:'30 min/10', bg:'#fffbeb', color:'#f59e0b',
+    tagline:'A spotless home, ready to welcome your guests.',
+    includes:['Cleaning of living room and dining area', 'Kitchen surface wipe-down and basic cleaning', 'Quick bathroom cleaning and deodorising', 'Full-house floor sweeping and mopping', 'Collection of visible trash/waste inside home', 'Washing of daily-use utensils', 'Dust removal from visible surfaces', 'Basic furniture arrangement and touch-up cleaning'],
+    excludes:['Upholstery shampooing or deep sofa cleaning', 'Cleaning inside appliances, cabinets, or wardrobes', 'Chimney cleaning or balcony exterior cleaning', 'Heavy grease, stubborn stains, or hard-water removal', 'Construction debris or renovation cleanup', 'Bulk garbage disposal outside premises', 'Deep kitchen or bathroom cleaning', 'Services beyond booked duration or package scope'],
+    timeEstimates:[{task:'Per shirt / top',time:'4–5 min'},{task:'Per trouser / salwar',time:'5–6 min'},{task:'Per saree / dupatta',time:'8–10 min'}],
+    faqs:[{q:'Do you bring an iron?',a:'Yes, Pros carry their own steam iron.'}]},
+    { id:'After-party Cleaning ', image:'/services/after.png',    name:'After-party Cleaning',  emoji:'👔', duration:'30 min/10', bg:'#fffbeb', color:'#f59e0b',
+    tagline:'Hassle-free cleanup after the party over.',
+    includes:['Floor cleaning and spill removal from accessible areas', 'Collection and disposal of visible trash, cans, and bottles', 'Kitchen reset including countertop, sink, and stovetop cleaning', 'Quick bathroom cleaning and deodorising', 'Living room tidying and furniture arrangement', 'Full-house floor sweeping and mopping', 'Washing of daily-use utensils', 'Basic surface wipe-down of common areas'],
+    excludes:['Vomit, biohazard, or hazardous waste cleaning', 'Upholstery shampooing or deep sofa cleaning', 'Cleaning inside appliances, cabinets, or chimneys', 'Balcony exterior cleaning', 'Heavy grease, stubborn stains, or permanent spill restoration', 'Construction debris or renovation cleanup', 'Bulk garbage disposal outside premises', 'Deep cleaning services beyond package scope', 'Additional work beyond booked duration'],
+    timeEstimates:[{task:'Per shirt / top',time:'4–5 min'},{task:'Per trouser / salwar',time:'5–6 min'},{task:'Per saree / dupatta',time:'8–10 min'}],
+    faqs:[{q:'Do you bring an iron?',a:'Yes, Pros carry their own steam iron.'}]},
 ];
 
 // Type derived from the SERVICES array — gives every `s` proper types so
 // s.name / s.includes / s.faqs etc. stop erroring as "never".
 type Service = typeof SERVICES[number];
-
-const REVIEWS = [
-  { name:'Priya M.',  area:'Gangapur Road, Nashik', text:'Spotless bathroom in under an hour. The pro was polite, on time, and thorough. Absolutely loved the experience!', rating:5, avatar:'PM', color:'#06b6d4' },
-  { name:'Rahul S.',  area:'Baner, Pune',           text:'They even cleaned inside the cabinets! Great value, zero hidden charges. Already booked my 3rd session.', rating:5, avatar:'RS', color:'#0891b2' },
-  { name:'Anjali K.', area:'Andheri, Mumbai',       text:'Full home package for Diwali. Team arrived exactly on time. My entire flat was completely transformed!', rating:5, avatar:'AK', color:'#0e7490' },
-  { name:'Suresh P.', area:'Civil Lines, Nagpur',   text:'The fridge cleaning was incredible — smells brand new. Super easy booking process, loved every step!', rating:5, avatar:'SP', color:'#0c4a6e' },
-];
 
 const HOW_STEPS = [
   { n:'01', emoji:'📋', title:'Choose your service',    desc:'Pick from cleaning services. See the exact flat price upfront.' },
@@ -148,8 +147,16 @@ const FAQ_ITEMS = [
   },
 ];
 
+// ─── HISTORY STATE TYPE ───────────────────────────────────────────────────────
+// What we push into window.history so the back/forward buttons can restore it.
+type ViewName = 'home' | 'services' | 'detail';
+type HistoryState = {
+  cleenzoView: ViewName;
+  serviceId?: string;
+};
+
 export default function CleanzoWebsite() {
-  const [view, setView]                       = useState('home');
+  const [view, setView]                       = useState<ViewName>('home');
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [selectedCity, setSelectedCity]       = useState('');
   const [selectedArea, setSelectedArea]       = useState('');
@@ -163,17 +170,86 @@ export default function CleanzoWebsite() {
 
   const CITY_LIST = Object.keys(CITIES_MAP);
 
+  // Guard so the popstate handler doesn't re-push history while it's
+  // just reacting to a back/forward navigation that already happened.
+  const isPopRef = useRef(false);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // ── BROWSER BACK/FORWARD SUPPORT ────────────────────────────────────────
+  // 1) On first mount, replace the current (single) history entry with one
+  //    that carries our 'home' state, so there's always something to read.
+  // 2) Listen for popstate (back/forward button) and update the React view
+  //    state to match — WITHOUT pushing a new entry (that would create a loop).
+  useEffect(() => {
+    // Seed the initial entry so Back from "home" doesn't leave the app.
+    window.history.replaceState({ cleenzoView: 'home' } as HistoryState, '', window.location.pathname);
+
+    const onPopState = (e: PopStateEvent) => {
+      const state = e.state as HistoryState | null;
+      isPopRef.current = true;
+
+      if (!state || state.cleenzoView === 'home') {
+        setView('home');
+        setSelectedService(null);
+      } else if (state.cleenzoView === 'services') {
+        setView('services');
+        setSelectedService(null);
+      } else if (state.cleenzoView === 'detail') {
+        const svc = SERVICES.find(s => s.id === state.serviceId) || null;
+        setSelectedService(svc);
+        setView(svc ? 'detail' : 'services');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // release the guard on next tick so subsequent manual navigation pushes normally
+      setTimeout(() => { isPopRef.current = false; }, 0);
+    };
+
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  // Helper: push a new history entry for a given app "page".
+  // Skipped when we're the ones reacting to a popstate event.
+  const pushHistory = useCallback((state: HistoryState) => {
+    if (isPopRef.current) return;
+    window.history.pushState(state, '', window.location.pathname);
+  }, []);
+
   const showToast  = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 3500); };
-  const goHome     = () => { setView('home'); setSelectedService(null); window.scrollTo({top:0,behavior:'smooth'}); };
-  const goServices = () => { setView('services'); window.scrollTo({top:0,behavior:'smooth'}); };
-  const openDetail = (s: Service) => { setSelectedService(s); setOpenFaq(null); setView('detail'); window.scrollTo({top:0,behavior:'smooth'}); };
-  const goBack     = () => { setView('services'); setSelectedService(null); window.scrollTo({top:0,behavior:'smooth'}); };
+
+  const goHome     = () => {
+    setView('home');
+    setSelectedService(null);
+    pushHistory({ cleenzoView: 'home' });
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  const goServices = () => {
+    setView('services');
+    pushHistory({ cleenzoView: 'services' });
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  const openDetail = (s: Service) => {
+    setSelectedService(s);
+    setOpenFaq(null);
+    setView('detail');
+    pushHistory({ cleenzoView: 'detail', serviceId: s.id });
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+
+  const goBack     = () => {
+    // Prefer the real browser back so the history stack stays clean —
+    // our popstate listener will pick up the resulting state change.
+    window.history.back();
+  };
+
   const scrollTo   = (id: string) => { goHome(); setTimeout(() => document.getElementById(id)?.scrollIntoView({behavior:'smooth'}), 100); };
   const handleBook = () => { if (!serviceCity) { showToast('👆 Select your city first'); return; } showToast(`✅ "${selectedService?.name}" — Download the app to confirm!`); };
   const handleApp  = (store: string = 'play') => {
@@ -223,6 +299,7 @@ export default function CleanzoWebsite() {
         .how-card:hover{border-color:var(--cy);box-shadow:0 12px 40px rgba(6,182,212,.1);transform:translateY(-3px);}
         .ocard{background:#fff;border:1.5px solid #e5e7eb;border-radius:16px;padding:16px;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:12px;}
         .ocard:hover{border-color:var(--cy);transform:translateY(-2px);box-shadow:0 8px 24px rgba(6,182,212,.1);}
+        .ocard-thumb{width:48px;height:48px;border-radius:12px;overflow:hidden;flex-shrink:0;}
         .city-pill{display:inline-flex;align-items:center;padding:7px 18px;border:1.5px solid #e5e7eb;border-radius:50px;font-size:13px;font-weight:500;color:#374151;background:#fff;cursor:pointer;transition:all .18s;font-family:'Outfit',sans-serif;}
         .city-pill:hover{border-color:var(--cy);color:var(--cy3);background:var(--light);}
         .city-pill.active{background:var(--cy);color:#fff;border-color:var(--cy);}
@@ -275,6 +352,8 @@ export default function CleanzoWebsite() {
           .hero-float-reviewer{bottom:16px!important;right:0!important;}
           .detail-grid{grid-template-columns:1fr!important;gap:28px!important;}
           .detail-sidebar{display:none!important;}
+          .detail-hero-grid{grid-template-columns:1fr!important;gap:30px!important;}
+          .incl-grid{grid-template-columns:1fr!important;gap:32px!important;}
           .nav-desktop{display:none!important;}
           .hamburger{display:flex!important;}
           .how-grid{grid-template-columns:1fr!important;}
@@ -649,7 +728,8 @@ export default function CleanzoWebsite() {
               <div style={{display:'flex',justifyContent:'center',gap:3,marginBottom:10}}>
                 {[1,2,3,4,5].map(i=><span key={i} style={{color:'#f59e0b',fontSize:22}}>★</span>)}
               </div>
-              <h2 style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:'clamp(24px,6vw,42px)',color:'#0c4a6e',lineHeight:1.12,marginBottom:12}}> India's Trusted<br/>Cleaning App
+              <h2 style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:'clamp(24px,6vw,42px)',color:'#0c4a6e',lineHeight:1.12,marginBottom:12}}>
+                India's Trusted<br/>Cleaning App
               </h2>
               <p style={{color:'#374151',fontSize:15.5,marginBottom:32,lineHeight:1.75}}>
                 On-demand home services to keep your house spotless — anytime, anywhere.
@@ -780,122 +860,142 @@ export default function CleanzoWebsite() {
         const s = selectedService;
         const others = SERVICES.filter(x=>x.id!==s.id).slice(0,6);
         return (
-          <div style={{background:'#fafafa',minHeight:'100vh'}}>
-            <div className="detail-subbar" style={{position:'sticky',top:70,zIndex:50,background:'rgba(255,255,255,.97)',backdropFilter:'blur(16px)',borderBottom:'1px solid #f0f0f0',padding:'12px 28px'}}>
-              <div style={{maxWidth:1180,margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',gap:14,flexWrap:'wrap'}}>
-                <div style={{display:'flex',alignItems:'center',gap:13}}>
-                  <button onClick={goBack} style={{background:'#f0fdfe',border:'1.5px solid #a5f3fc',borderRadius:12,padding:'7px 16px',fontSize:13,color:'#0e7490',cursor:'pointer',fontWeight:600,fontFamily:"'Outfit',sans-serif"}}>← All services</button>
-                  <span style={{fontSize:21}}>{s.emoji}</span>
-                  <span style={{fontSize:15,fontWeight:700,color:'#0c4a6e'}}>{s.name}</span>
+          <div style={{background:'#fff',minHeight:'100vh'}}>
+            {/* ── HERO BAND ── */}
+            <div style={{position:'relative',overflow:'hidden',background:'linear-gradient(160deg,#f0fdfe 0%,#e0f7fa 55%,#ffffff 100%)'}}>
+              <div style={{position:'absolute',top:-90,left:-70,width:360,height:360,background:'radial-gradient(circle,rgba(6,182,212,.14) 0%,transparent 70%)',pointerEvents:'none'}}/>
+              <div style={{position:'absolute',inset:0,backgroundImage:'radial-gradient(rgba(6,182,212,.10) 1.5px,transparent 1.5px)',backgroundSize:'26px 26px',opacity:.5,pointerEvents:'none'}}/>
+              <div className="detail-wrap" style={{maxWidth:1180,margin:'0 auto',padding:'28px 28px 64px',position:'relative',zIndex:1}}>
+
+                {/* breadcrumb */}
+                <div style={{display:'flex',alignItems:'center',gap:10,fontSize:14,fontWeight:600,marginBottom:34,flexWrap:'wrap'}}>
+                  <button onClick={goHome} style={{background:'none',border:'none',cursor:'pointer',color:'#0891b2',fontFamily:"'Outfit',sans-serif",fontWeight:600,fontSize:14,padding:0}}>Home</button>
+                  <span style={{color:'#94a3b8'}}>/</span>
+                  <button onClick={goBack} style={{background:'none',border:'none',cursor:'pointer',color:'#0891b2',fontFamily:"'Outfit',sans-serif",fontWeight:600,fontSize:14,padding:0}}>Services</button>
+                  <span style={{color:'#94a3b8'}}>/</span>
+                  <span style={{color:'#0c4a6e'}}>{s.name}</span>
                 </div>
-                <div style={{display:'flex',alignItems:'center',gap:11}}>
-                  <select value={serviceCity} onChange={e=>setServiceCity(e.target.value)}
-                    style={{border:'1.5px solid #a5f3fc',background:'#f0fdfe',borderRadius:12,padding:'8px 14px',fontSize:13,color:'#0e7490',fontFamily:"'Outfit',sans-serif",cursor:'pointer',outline:'none'}}>
-                    <option value="">📍 City</option>
-                    {CITY_LIST.map(c=><option key={c}>{c}</option>)}
-                  </select>
-                  <button className="btn-primary" style={{padding:'10px 24px',fontSize:14}} onClick={handleBook}>Book now</button>
+
+                {/* hero grid */}
+                <div className="detail-hero-grid" style={{display:'grid',gridTemplateColumns:'1.05fr .95fr',gap:48,alignItems:'center'}}>
+                  <div>
+                    <h1 style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:'clamp(40px,8vw,80px)',lineHeight:1.04,letterSpacing:'-1px',color:'#0c2740',margin:'0 0 22px'}}>{s.name}</h1>
+                    <p style={{fontSize:18,color:'#475569',lineHeight:1.7,maxWidth:520,marginBottom:26}}>{s.tagline} Book a verified Cleenzo Pro in the app, on your schedule.</p>
+                    <div style={{display:'flex',gap:9,flexWrap:'wrap',marginBottom:30}}>
+                      <span style={{background:'#fff',border:`1.5px solid ${s.color}`,color:s.color,borderRadius:50,padding:'6px 16px',fontSize:13,fontWeight:600}}>⏱ {s.duration}</span>
+                      <span style={{background:'#fff',border:'1.5px solid #e5e7eb',color:'#374151',borderRadius:50,padding:'6px 16px',fontSize:13}}>✅ Satisfaction guarantee</span>
+                    </div>
+                    <div style={{display:'flex',gap:13,flexWrap:'wrap',alignItems:'center'}}>
+                      <button onClick={() => handleApp('play')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
+                        <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
+                          <path d="M3 3.5L13.5 12 3 20.5V3.5Z" fill="#4CAF50"/>
+                          <path d="M3 3.5L13.5 12 8.5 17 3 3.5Z" fill="#2196F3"/>
+                          <path d="M13.5 12L21 7.5 16.5 12 21 16.5 13.5 12Z" fill="#FFC107"/>
+                          <path d="M3 20.5L8.5 17 13.5 12 3 20.5Z" fill="#F44336"/>
+                        </svg>
+                        <div style={{textAlign:'left'}}><div style={{fontSize:9,opacity:.7,letterSpacing:.8,textTransform:'uppercase'}}>Get it on</div><div style={{fontSize:15,fontWeight:700}}>Google Play</div></div>
+                      </button>
+                      <button onClick={() => handleApp('ios')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
+                        <svg width="21" height="21" viewBox="0 0 24 24" fill="white">
+                          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                        </svg>
+                        <div style={{textAlign:'left'}}><div style={{fontSize:9,opacity:.7,letterSpacing:.8,textTransform:'uppercase'}}>Download on the</div><div style={{fontSize:15,fontWeight:700}}>App Store</div></div>
+                      </button>
+                      <button onClick={goBack} style={{display:'inline-flex',alignItems:'center',gap:8,background:'#fff',color:'#0e7490',border:'2px solid #a5e8f3',borderRadius:50,padding:'12px 24px',fontSize:14.5,fontWeight:700,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all .2s'}}
+                        onMouseOver={e=>{e.currentTarget.style.borderColor='#06b6d4';}} onMouseOut={e=>{e.currentTarget.style.borderColor='#a5e8f3';}}>
+                        All {SERVICES.length} Cleenzo services
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* image card */}
+                  <div className="detail-hero-img" style={{position:'relative'}}>
+                    <div style={{position:'absolute',top:-28,right:-18,width:140,height:140,borderRadius:'50%',background:`${s.color}22`,pointerEvents:'none'}}/>
+                    <div style={{position:'relative',borderRadius:30,overflow:'hidden',background:s.bg,boxShadow:'0 24px 60px rgba(6,182,212,.20)',border:'1px solid rgba(255,255,255,.7)',aspectRatio:'4 / 3'}}>
+                      <ServiceImage src={s.image} alt={s.name} bg={s.bg} color={s.color}/>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="detail-grid detail-wrap" style={{maxWidth:1180,margin:'0 auto',padding:'44px 28px 88px',display:'grid',gridTemplateColumns:'1fr 330px',gap:44,alignItems:'start'}}>
-              <div>
-                <div className="detail-hero" style={{background:s.bg,borderRadius:28,padding:'48px 40px',marginBottom:44,display:'flex',gap:32,alignItems:'center',flexWrap:'wrap',position:'relative',overflow:'hidden'}}>
-                  <div style={{position:'absolute',top:-40,right:-40,width:180,height:180,background:`${s.color}18`,borderRadius:'50%',pointerEvents:'none'}}/>
-                  <div style={{width:110,height:110,borderRadius:22,overflow:'hidden',flexShrink:0,position:'relative',zIndex:1,boxShadow:'0 8px 28px rgba(0,0,0,.12)'}}>
-                    <ServiceImage src={s.image} alt={s.name} bg={s.bg} color={s.color}/>
-                  </div>
-                  <div style={{position:'relative',zIndex:1}}>
-                    <h1 style={{fontSize:'clamp(26px,7vw,42px)',fontWeight:800,fontFamily:"'Playfair Display',serif",color:'#0c4a6e',margin:'0 0 11px'}}>{s.name}</h1>
-                    <p style={{fontSize:16,color:'#374151',marginBottom:18,lineHeight:1.65}}>{s.tagline}</p>
-                    <div style={{display:'flex',gap:9,flexWrap:'wrap'}}>
-                      <span style={{background:'#fff',border:`1.5px solid ${s.color}`,color:s.color,borderRadius:50,padding:'5px 15px',fontSize:13,fontWeight:600}}>⏱ {s.duration}</span>
-                      <span style={{background:'#fff',border:'1.5px solid #e5e7eb',color:'#374151',borderRadius:50,padding:'5px 15px',fontSize:13}}>🧴 Products included</span>
-                      <span style={{background:'#fff',border:'1.5px solid #e5e7eb',color:'#374151',borderRadius:50,padding:'5px 15px',fontSize:13}}>✅ Satisfaction guarantee</span>
+
+            {/* ── BODY ── */}
+            <div className="detail-wrap" style={{maxWidth:1180,margin:'0 auto',padding:'56px 28px 88px'}}>
+
+              {/* included / not included */}
+              <div className="incl-grid" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'40px 56px',marginBottom:56}}>
+                <div>
+                  <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:24}}>
+                    <div style={{width:44,height:44,borderRadius:'50%',background:'#dcfce7',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
                     </div>
+                    <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:'clamp(24px,5vw,30px)',fontWeight:800,color:'#0c4a6e',margin:0}}>What&apos;s included</h2>
                   </div>
+                  {s.includes.map(i => (
+                    <div key={i} style={{display:'flex',gap:13,alignItems:'flex-start',marginBottom:15,fontSize:15.5,color:'#374151',lineHeight:1.5}}>
+                      <span style={{width:7,height:7,borderRadius:'50%',background:'#06b6d4',marginTop:8,flexShrink:0}}/>{i}
+                    </div>
+                  ))}
                 </div>
-                <DetailSection title="What's included">
-                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(180px,1fr))',gap:10}}>
-                    {s.includes.map(i => (
-                      <div key={i} style={{display:'flex',alignItems:'flex-start',gap:9,background:'#f0fdf4',borderRadius:12,padding:'10px 14px',fontSize:13.5,color:'#374151'}}>
-                        <span style={{color:'#10b981',fontWeight:700,flexShrink:0}}>✓</span>{i}
-                      </div>
-                    ))}
+                <div>
+                  <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:24}}>
+                    <div style={{width:44,height:44,borderRadius:'50%',background:'#fee2e2',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    </div>
+                    <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:'clamp(24px,5vw,30px)',fontWeight:800,color:'#0c4a6e',margin:0}}>Not included</h2>
                   </div>
-                </DetailSection>
-                <DetailSection title="Does not include">
                   {s.excludes.map(i => (
-                    <div key={i} style={{display:'flex',gap:9,alignItems:'flex-start',fontSize:14,color:'#6b7280',marginBottom:9}}>
-                      <span style={{color:'#f87171',fontWeight:700,flexShrink:0}}>✕</span>{i}
+                    <div key={i} style={{display:'flex',gap:13,alignItems:'flex-start',marginBottom:15,fontSize:15.5,color:'#6b7280',lineHeight:1.5}}>
+                      <span style={{width:7,height:7,borderRadius:'50%',background:'#f87171',marginTop:8,flexShrink:0}}/>{i}
                     </div>
                   ))}
-                </DetailSection>
-                <DetailSection title="How long does it take?">
-                  <p style={{fontSize:13,color:'#9ca3af',marginBottom:16}}>Estimates based on standard 2BHK.</p>
-                  <div style={{border:'1.5px solid #e5e7eb',borderRadius:16,overflow:'hidden'}}>
-                    {s.timeEstimates.map((t,i) => (
-                      <div key={t.task} style={{display:'flex',justifyContent:'space-between',padding:'14px 20px',background:i%2===0?'#fff':'#fafafa',fontSize:14,borderBottom:i<s.timeEstimates.length-1?'1px solid #f0f0f0':'none'}}>
-                        <span style={{color:'#374151',fontWeight:500}}>{t.task}</span>
-                        <span style={{color:'#06b6d4',fontWeight:700}}>{t.time}</span>
-                      </div>
-                    ))}
-                  </div>
-                </DetailSection>
-                <DetailSection title="Frequently asked questions">
-                  {s.faqs.map((faq,i) => (
-                    <div key={i} className="faq-item">
-                      <div className="faq-q" onClick={() => setOpenFaq(openFaq===i?null:i)}>
-                        {faq.q}
-                        <span style={{color:'#9ca3af',fontSize:22,transition:'transform .2s',transform:openFaq===i?'rotate(45deg)':'none',display:'inline-block'}}>+</span>
-                      </div>
-                      {openFaq===i && <div className="faq-a">{faq.a}</div>}
-                    </div>
-                  ))}
-                </DetailSection>
-                <DetailSection title={`Available in ${CITY_LIST.length} Maharashtra cities`}>
-                  <div style={{display:'flex',gap:9,flexWrap:'wrap'}}>
-                    {CITY_LIST.map(city => (
-                      <button key={city} className={`city-pill${serviceCity===city?' active':''}`} onClick={() => setServiceCity(city)}>{city}</button>
-                    ))}
-                  </div>
-                </DetailSection>
-                <DetailSection title="More ways to keep your home clean">
-                  <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:11}}>
-                    {others.map(os => (
-                      <div key={os.id} className="ocard" onClick={() => openDetail(os)}>
-                        <span style={{fontSize:27}}>{os.emoji}</span>
-                        <div>
-                          <div style={{fontSize:13,fontWeight:600,color:'#0c4a6e'}}>{os.name}</div>
-                          <div style={{fontSize:12,color:'#9ca3af',marginTop:2}}>{os.duration}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </DetailSection>
-              </div>
-              <div className="detail-sidebar" style={{position:'sticky',top:148}}>
-                <div style={{background:'#fff',border:'1.5px solid #e5e7eb',borderRadius:28,padding:28,boxShadow:'0 12px 48px rgba(0,0,0,.06)'}}>
-                  <div style={{fontSize:40,marginBottom:10}}>{s.emoji}</div>
-                  <h2 style={{fontSize:20,fontWeight:800,fontFamily:"'Playfair Display',serif",color:'#0c4a6e',marginBottom:5}}>{s.name}</h2>
-                  <p style={{fontSize:13,color:'#9ca3af',marginBottom:24}}>⏱ {s.duration} · All products included</p>
-                  <label style={{fontSize:11,fontWeight:700,color:'#374151',display:'block',marginBottom:7,letterSpacing:.8}}>YOUR CITY</label>
-                  <select value={serviceCity} onChange={e=>setServiceCity(e.target.value)}
-                    style={{width:'100%',border:'1.5px solid #e5e7eb',borderRadius:14,padding:'12px 16px',fontSize:14,fontFamily:"'Outfit',sans-serif",color:'#374151',outline:'none',cursor:'pointer',marginBottom:16}}>
-                    <option value="">Select city</option>
-                    {CITY_LIST.map(c=><option key={c}>{c}</option>)}
-                  </select>
-                  <button className="btn-primary" style={{width:'100%',padding:'14px',fontSize:15,borderRadius:16,marginBottom:11}} onClick={handleBook}>Book now</button>
-                  <button className="btn-outline" style={{width:'100%',padding:'12px',fontSize:14,borderRadius:16}} onClick={goBack}>← View all services</button>
-                  <div style={{marginTop:20,paddingTop:20,borderTop:'1px solid #f0f0f0'}}>
-                    {[['🛡️','Satisfaction guarantee'],['🧴','Equipment & products included'],['✅','Verified & trained Pros'],['⏰','On-time guarantee']].map(([icon,label]) => (
-                      <div key={label} style={{display:'flex',gap:10,alignItems:'center',marginBottom:10,fontSize:13,color:'#6b7280'}}>
-                        <span>{icon}</span>{label}
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
+
+              <DetailSection title="How long does it take?">
+                <p style={{fontSize:13,color:'#9ca3af',marginBottom:16}}>Estimates based on standard 2BHK.</p>
+                <div style={{border:'1.5px solid #e5e7eb',borderRadius:16,overflow:'hidden'}}>
+                  {s.timeEstimates.map((t,i) => (
+                    <div key={t.task} style={{display:'flex',justifyContent:'space-between',padding:'14px 20px',background:i%2===0?'#fff':'#fafafa',fontSize:14,borderBottom:i<s.timeEstimates.length-1?'1px solid #f0f0f0':'none'}}>
+                      <span style={{color:'#374151',fontWeight:500}}>{t.task}</span>
+                      <span style={{color:'#06b6d4',fontWeight:700}}>{t.time}</span>
+                    </div>
+                  ))}
+                </div>
+              </DetailSection>
+              <DetailSection title="Frequently asked questions">
+                {s.faqs.map((faq,i) => (
+                  <div key={i} className="faq-item">
+                    <div className="faq-q" onClick={() => setOpenFaq(openFaq===i?null:i)}>
+                      {faq.q}
+                      <span style={{color:'#9ca3af',fontSize:22,transition:'transform .2s',transform:openFaq===i?'rotate(45deg)':'none',display:'inline-block'}}>+</span>
+                    </div>
+                    {openFaq===i && <div className="faq-a">{faq.a}</div>}
+                  </div>
+                ))}
+              </DetailSection>
+              <DetailSection title={`Available in ${CITY_LIST.length} Maharashtra cities`}>
+                <div style={{display:'flex',gap:9,flexWrap:'wrap'}}>
+                  {CITY_LIST.map(city => (
+                    <button key={city} className={`city-pill${serviceCity===city?' active':''}`} onClick={() => setServiceCity(city)}>{city}</button>
+                  ))}
+                </div>
+              </DetailSection>
+              <DetailSection title="More ways to keep your home clean">
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:11}}>
+                  {others.map(os => (
+                    <div key={os.id} className="ocard" onClick={() => openDetail(os)}>
+                      <div className="ocard-thumb" style={{background:os.bg}}>
+                        <ServiceImage src={os.image} alt={os.name} bg={os.bg} color={os.color}/>
+                      </div>
+                      <div>
+                        <div style={{fontSize:13,fontWeight:600,color:'#0c4a6e'}}>{os.name}</div>
+                        <div style={{fontSize:12,color:'#9ca3af',marginTop:2}}>{os.duration}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </DetailSection>
             </div>
           </div>
         );
