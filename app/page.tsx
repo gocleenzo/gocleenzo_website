@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { ReactNode } from 'react';
+import Image from 'next/image';
 
 // ─── SITE CONFIG ─────────────────────────────────────────────────────────────
 const SITE = {
@@ -21,7 +22,28 @@ const CITIES_MAP = {
   Mumbai:     ['Andheri','Vile Parle', 'Juhu'],
 };
 
-const SERVICES = [
+// Explicit shape for each entry in SERVICES. Declaring this up front (and
+// annotating the array below as Service[]) means every `s` you get from
+// `SERVICES.map(s => ...)` is typed correctly everywhere in the file —
+// including `popular`, which isn't set on any entry yet but is read in JSX
+// for a future "TOP" badge.
+interface Service {
+  id: string;
+  image: string;
+  name: string;
+  emoji: string;
+  duration: string;
+  bg: string;
+  color: string;
+  tagline: string;
+  includes: string[];
+  excludes: string[];
+  timeEstimates: { task: string; time: string }[];
+  faqs: { q: string; a: string }[];
+  popular?: boolean;
+}
+
+const SERVICES: Service[] = [
   { id:'bathroom-cleaning', image:'/services/bathroom-cleaning.png',  name:'Bathroom Cleaning',  emoji:'🚿', duration:'40–60 min',  bg:'#e0f7fa', color:'#06b6d4',
     tagline:'Deep-clean your bathroom in under an hour.',
     includes:['Cleaning of toilet bowl, seat, and rim', 'Cleaning of washbasin and faucet', 'Wiping of bathroom tiles and visible surfaces', 'Cleaning of taps and bathroom fixtures', 'Sweeping and mopping of bathroom floor', 'Final wipe-down and deodorizing', 'Basic stain removal', 'Dust removal from visible corners'],
@@ -102,10 +124,6 @@ const SERVICES = [
     faqs:[{q:'Do you bring an iron?',a:'Yes, Pros carry their own steam iron.'}]},
 ];
 
-// Type derived from the SERVICES array — gives every `s` proper types so
-// s.name / s.includes / s.faqs etc. stop erroring as "never".
-type Service = typeof SERVICES[number];
-
 const HOW_STEPS = [
   { n:'01', emoji:'📋', title:'Choose your service',    desc:'Pick from cleaning services. See the exact flat price upfront.' },
   { n:'02', emoji:'📅', title:'Pick a time slot',       desc:'Instant, scheduled. Pay via UPI or Card.' },
@@ -158,8 +176,9 @@ type HistoryState = {
 export default function CleanzoWebsite() {
   const [view, setView]                       = useState<ViewName>('home');
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [selectedCity, setSelectedCity]       = useState('');
-  const [selectedArea, setSelectedArea]       = useState('');
+  // Only the setter is used (footer "city" click) — destructuring just the
+  // setter avoids an unused-variable warning on the read side.
+  const [, setSelectedCity]                   = useState('');
   const [serviceCity, setServiceCity]         = useState('');
   const [openFaq, setOpenFaq]                 = useState<number | null>(null);
   const [toast, setToast]                     = useState('');
@@ -251,8 +270,10 @@ export default function CleanzoWebsite() {
   };
 
   const scrollTo   = (id: string) => { goHome(); setTimeout(() => document.getElementById(id)?.scrollIntoView({behavior:'smooth'}), 100); };
-  const handleBook = () => { if (!serviceCity) { showToast('👆 Select your city first'); return; } showToast(`✅ "${selectedService?.name}" — Download the app to confirm!`); };
-  const handleApp  = (store: string = 'play') => {
+  // store param removed — handleApp doesn't branch on it yet, so keeping an
+  // unused parameter just to look "future-proof" was tripping the linter.
+  // Re-add `(store: 'play' | 'ios')` here if/when deep-linking is implemented.
+  const handleApp  = () => {
     showToast("🚀 App launching soon! We'll notify you.");
   };
   const toggleFaq  = (id: string) => setOpenFaqId(openFaqId === id ? null : id);
@@ -299,7 +320,7 @@ export default function CleanzoWebsite() {
         .how-card:hover{border-color:var(--cy);box-shadow:0 12px 40px rgba(6,182,212,.1);transform:translateY(-3px);}
         .ocard{background:#fff;border:1.5px solid #e5e7eb;border-radius:16px;padding:16px;cursor:pointer;transition:all .22s;display:flex;align-items:center;gap:12px;}
         .ocard:hover{border-color:var(--cy);transform:translateY(-2px);box-shadow:0 8px 24px rgba(6,182,212,.1);}
-        .ocard-thumb{width:48px;height:48px;border-radius:12px;overflow:hidden;flex-shrink:0;}
+        .ocard-thumb{width:48px;height:48px;border-radius:12px;overflow:hidden;flex-shrink:0;position:relative;}
         .city-pill{display:inline-flex;align-items:center;padding:7px 18px;border:1.5px solid #e5e7eb;border-radius:50px;font-size:13px;font-weight:500;color:#374151;background:#fff;cursor:pointer;transition:all .18s;font-family:'Outfit',sans-serif;}
         .city-pill:hover{border-color:var(--cy);color:var(--cy3);background:var(--light);}
         .city-pill.active{background:var(--cy);color:#fff;border-color:var(--cy);}
@@ -428,7 +449,7 @@ export default function CleanzoWebsite() {
             <button className="nav-link" onClick={() => scrollTo('faq')}>FAQ</button>
           </div>
           <div className="nav-desktop" style={{display:'flex',gap:12,alignItems:'center'}}>
-            <button onClick={() => handleApp('play')} style={{padding:'10px 22px',fontSize:15,fontWeight:600,color:'#fff',background:'transparent',border:'2px solid rgba(255,255,255,.7)',borderRadius:50,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all .2s'}}
+            <button onClick={() => handleApp()} style={{padding:'10px 22px',fontSize:15,fontWeight:600,color:'#fff',background:'transparent',border:'2px solid rgba(255,255,255,.7)',borderRadius:50,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all .2s'}}
               onMouseOver={e=>{e.currentTarget.style.background='rgba(255,255,255,.16)';}} onMouseOut={e=>{e.currentTarget.style.background='transparent';}}>Get the app</button>
             <button onClick={goServices} style={{padding:'11px 26px',fontSize:15,fontWeight:700,color:'#0e7490',background:'#fff',border:'none',borderRadius:50,cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 18px rgba(0,0,0,.14)',transition:'transform .2s'}}
               onMouseOver={e=>e.currentTarget.style.transform='translateY(-2px)'} onMouseOut={e=>e.currentTarget.style.transform='translateY(0)'}>Book now →</button>
@@ -443,7 +464,7 @@ export default function CleanzoWebsite() {
             {['Services','How it works','Cities','Reviews','FAQ'].map(l => (
               <button key={l} style={{textAlign:'left',padding:'8px 18px',fontSize:15,fontWeight:600,color:'#0c4a6e',background:'none',border:'none',cursor:'pointer',fontFamily:"'Outfit',sans-serif"}} onClick={() => { setMobileOpen(false); if (l==='Services') goServices(); else scrollTo(l.toLowerCase().replace(/ /g,'')); }}>{l}</button>
             ))}
-            <button className="btn-primary" style={{padding:'12px',fontSize:14,marginTop:4,margin:'4px 18px 0'}} onClick={() => { setMobileOpen(false); handleApp('play'); }}>Download App</button>
+            <button className="btn-primary" style={{padding:'12px',fontSize:14,marginTop:4,margin:'4px 18px 0'}} onClick={() => { setMobileOpen(false); handleApp(); }}>Download App</button>
           </div>
         )}
       </nav>
@@ -633,7 +654,7 @@ export default function CleanzoWebsite() {
               ))}
             </div>
             <div style={{textAlign:'center',marginTop:52}}>
-              <button className="btn-primary" style={{padding:'15px 40px',fontSize:15}} onClick={() => handleApp('play')}>Download the app — it's free →</button>
+              <button className="btn-primary" style={{padding:'15px 40px',fontSize:15}} onClick={() => handleApp()}>Download the app — it&apos;s free →</button>
             </div>
           </div>
         </section>
@@ -657,7 +678,7 @@ export default function CleanzoWebsite() {
               </h2>
               <p style={{color:'#374151',fontSize:16,maxWidth:460,margin:'0 auto',lineHeight:1.75}}>
                 Everything you need to know about Cleenzo.{' '}
-                <a href="/contact" style={{color:'#0891b2',fontWeight:600,textDecoration:'none'}}>Can't find an answer? Ask us →</a>
+                <a href="/contact" style={{color:'#0891b2',fontWeight:600,textDecoration:'none'}}>Can&apos;t find an answer? Ask us →</a>
               </p>
             </div>
 
@@ -722,20 +743,26 @@ export default function CleanzoWebsite() {
 
         {/* DOWNLOAD CTA */}
         <section style={{position:'relative',overflow:'hidden',minHeight:520,display:'flex',alignItems:'center',padding:'0'}}>
-          <img src="/cleenzo-pros.png" alt="Cleenzo Pros cleaning" style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center'}}/>
+          <Image
+            src="/cleenzo-pros.png"
+            alt="Cleenzo Pros cleaning"
+            fill
+            sizes="100vw"
+            style={{objectFit:'cover',objectPosition:'center'}}
+          />
           <div className="cta-inner" style={{position:'relative',zIndex:2,width:'100%',display:'flex',justifyContent:'center',alignItems:'center',padding:'60px 28px'}}>
             <div className="cta-card" style={{background:'rgba(255,255,255,0.72)',backdropFilter:'blur(18px)',WebkitBackdropFilter:'blur(18px)',border:'1.5px solid rgba(255,255,255,.85)',borderRadius:32,padding:'44px 52px',textAlign:'center',maxWidth:480,boxShadow:'0 20px 64px rgba(6,182,212,.18)'}}>
               <div style={{display:'flex',justifyContent:'center',gap:3,marginBottom:10}}>
                 {[1,2,3,4,5].map(i=><span key={i} style={{color:'#f59e0b',fontSize:22}}>★</span>)}
               </div>
               <h2 style={{fontFamily:"'Playfair Display',serif",fontWeight:800,fontSize:'clamp(24px,6vw,42px)',color:'#0c4a6e',lineHeight:1.12,marginBottom:12}}>
-                India's Trusted<br/>Cleaning App
+                India&apos;s Trusted<br/>Cleaning App
               </h2>
               <p style={{color:'#374151',fontSize:15.5,marginBottom:32,lineHeight:1.75}}>
                 On-demand home services to keep your house spotless — anytime, anywhere.
               </p>
               <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
-                <button onClick={() => handleApp('play')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',transition:'all .22s',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
+                <button onClick={() => handleApp()} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',transition:'all .22s',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
                   <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
                     <path d="M3 3.5L13.5 12 3 20.5V3.5Z" fill="#4CAF50"/>
                     <path d="M3 3.5L13.5 12 8.5 17 3 3.5Z" fill="#2196F3"/>
@@ -744,7 +771,7 @@ export default function CleanzoWebsite() {
                   </svg>
                   <div style={{textAlign:'left'}}><div style={{fontSize:9,opacity:.7,letterSpacing:.8,textTransform:'uppercase'}}>Get it on</div><div style={{fontSize:15,fontWeight:700}}>Google Play</div></div>
                 </button>
-                <button onClick={() => handleApp('ios')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',transition:'all .22s',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
+                <button onClick={() => handleApp()} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',transition:'all .22s',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
                   <svg width="21" height="21" viewBox="0 0 24 24" fill="white">
                     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                   </svg>
@@ -849,7 +876,7 @@ export default function CleanzoWebsite() {
                 <h3 style={{fontSize:22,fontWeight:800,fontFamily:"'Playfair Display',serif",color:'#fff',marginBottom:8}}>Get trusted house help in minutes.</h3>
                 <p style={{fontSize:14,color:'rgba(255,255,255,.65)'}}>Download the Cleenzo app and book your first service today.</p>
               </div>
-              <button className="btn-white" style={{padding:'14px 30px',fontSize:15,flexShrink:0}} onClick={() => handleApp('play')}>Download the app →</button>
+              <button className="btn-white" style={{padding:'14px 30px',fontSize:15,flexShrink:0}} onClick={() => handleApp()}>Download the app →</button>
             </div>
           </div>
         </div>
@@ -886,7 +913,7 @@ export default function CleanzoWebsite() {
                       <span style={{background:'#fff',border:'1.5px solid #e5e7eb',color:'#374151',borderRadius:50,padding:'6px 16px',fontSize:13}}>✅ Satisfaction guarantee</span>
                     </div>
                     <div style={{display:'flex',gap:13,flexWrap:'wrap',alignItems:'center'}}>
-                      <button onClick={() => handleApp('play')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
+                      <button onClick={() => handleApp()} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
                         <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
                           <path d="M3 3.5L13.5 12 3 20.5V3.5Z" fill="#4CAF50"/>
                           <path d="M3 3.5L13.5 12 8.5 17 3 3.5Z" fill="#2196F3"/>
@@ -895,7 +922,7 @@ export default function CleanzoWebsite() {
                         </svg>
                         <div style={{textAlign:'left'}}><div style={{fontSize:9,opacity:.7,letterSpacing:.8,textTransform:'uppercase'}}>Get it on</div><div style={{fontSize:15,fontWeight:700}}>Google Play</div></div>
                       </button>
-                      <button onClick={() => handleApp('ios')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
+                      <button onClick={() => handleApp()} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
                         <svg width="21" height="21" viewBox="0 0 24 24" fill="white">
                           <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                         </svg>
@@ -1125,11 +1152,13 @@ function HeroImage({ src }: { src: string }) {
     );
   }
   return (
-    <img
+    <Image
       src={src}
       alt="Cleenzo cleaning professional"
+      fill
+      sizes="(max-width: 768px) 290px, 520px"
       onError={() => setErr(true)}
-      style={{maxWidth:'100%',maxHeight:'100%',objectFit:'contain',display:'block',filter:'drop-shadow(0 22px 34px rgba(0,0,0,.22))'}}
+      style={{objectFit:'contain',filter:'drop-shadow(0 22px 34px rgba(0,0,0,.22))'}}
     />
   );
 }
@@ -1154,11 +1183,13 @@ function ServiceImage({ src, alt, bg, color }: {
     );
   }
   return (
-    <img
+    <Image
       src={src}
       alt={alt}
+      fill
+      sizes="(max-width: 768px) 50vw, 220px"
       onError={() => setErr(true)}
-      style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center',display:'block',transition:'transform .35s ease'}}
+      style={{objectFit:'cover',objectPosition:'center',transition:'transform .35s ease'}}
       onMouseOver={e => (e.currentTarget.style.transform = 'scale(1.06)')}
       onMouseOut={e  => (e.currentTarget.style.transform = 'scale(1)')}
     />
