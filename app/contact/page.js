@@ -90,7 +90,7 @@ export default function ContactPage() {
           </p>
           <div style={{ display:'flex',flexDirection:'column',gap:14,marginBottom:44 }}>
             {[
-              { icon:'📧', label:'Email us',  value:'gocleenzo@gmailcom',       sub:'We reply within 24 hours' },
+              { icon:'📧', label:'Email us',  value:'gocleenzo@gmail.com',       sub:'We reply within 24 hours' },
               { icon:'📞', label:'Call us',   value:'+91 97027 28298' },
               { icon:'📍', label:'Based in',  value:'Mumbai, Maharashtra'},
             ].map(item => (
