@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Cleenzo - Househelp in minutes",
   description: "Househelp in minutes",
+  verification: {
+    google: "-RhR3N4pED2nfWRJN_ubgRcO7LMKqtAJ2qFEOfJIYHs",
+  },
 };
 
 export default function RootLayout({
@@ -30,4 +33,4 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );
-} 4
+}
