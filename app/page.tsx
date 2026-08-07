@@ -12,9 +12,9 @@ const SITE = {
   rating: '4.8',
   ratingCount: '12,400+',
   footerNote: 'Made with ❤️ in Mumbai, Maharashtra',
-  copyright: '© 2026 Cleenzo. All rights reserved.',
+  copyright: '© Cubicle Ventures Private Limited. All rights reserved.',
   email: 'gocleenzo@gmail.com',
-  playStoreUrl: 'https://play.google.com/store',
+  playStoreUrl: 'https://play.google.com/store/apps/details?id=com.cubicleventurespvtltd.cleenzoapp',
   appStoreUrl: 'https://apps.apple.com',
 };
 
@@ -270,10 +270,24 @@ export default function CleanzoWebsite() {
   };
 
   const scrollTo   = (id: string) => { goHome(); setTimeout(() => document.getElementById(id)?.scrollIntoView({behavior:'smooth'}), 100); };
-  // store param removed — handleApp doesn't branch on it yet, so keeping an
-  // unused parameter just to look "future-proof" was tripping the linter.
-  // Re-add `(store: 'play' | 'ios')` here if/when deep-linking is implemented.
-  const handleApp  = () => {
+
+  // handleApp:
+  //  - store === 'play' → opens the live Play Store listing in a new tab
+  //  - store === 'ios'  → App Store listing isn't live yet, show a toast
+  //  - no argument       → generic "get the app" entry points; best-effort
+  //                        OS detection sends Android users straight to
+  //                        Play Store, everyone else gets the toast
+  const handleApp = (store?: 'play' | 'ios') => {
+    const isAndroid = typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent);
+
+    if (store === 'play' || (!store && isAndroid)) {
+      window.open(SITE.playStoreUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    if (store === 'ios') {
+      showToast("🍎 iOS app launching soon! We'll notify you.");
+      return;
+    }
     showToast("🚀 App launching soon! We'll notify you.");
   };
   const toggleFaq  = (id: string) => setOpenFaqId(openFaqId === id ? null : id);
@@ -762,7 +776,7 @@ export default function CleanzoWebsite() {
                 On-demand home services to keep your house spotless — anytime, anywhere.
               </p>
               <div style={{display:'flex',gap:12,justifyContent:'center',flexWrap:'wrap'}}>
-                <button onClick={() => handleApp()} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',transition:'all .22s',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
+                <button onClick={() => handleApp('play')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',transition:'all .22s',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
                   <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
                     <path d="M3 3.5L13.5 12 3 20.5V3.5Z" fill="#4CAF50"/>
                     <path d="M3 3.5L13.5 12 8.5 17 3 3.5Z" fill="#2196F3"/>
@@ -771,7 +785,7 @@ export default function CleanzoWebsite() {
                   </svg>
                   <div style={{textAlign:'left'}}><div style={{fontSize:9,opacity:.7,letterSpacing:.8,textTransform:'uppercase'}}>Get it on</div><div style={{fontSize:15,fontWeight:700}}>Google Play</div></div>
                 </button>
-                <button onClick={() => handleApp()} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',transition:'all .22s',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
+                <button onClick={() => handleApp('ios')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',transition:'all .22s',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
                   <svg width="21" height="21" viewBox="0 0 24 24" fill="white">
                     <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                   </svg>
@@ -913,7 +927,7 @@ export default function CleanzoWebsite() {
                       <span style={{background:'#fff',border:'1.5px solid #e5e7eb',color:'#374151',borderRadius:50,padding:'6px 16px',fontSize:13}}>✅ Satisfaction guarantee</span>
                     </div>
                     <div style={{display:'flex',gap:13,flexWrap:'wrap',alignItems:'center'}}>
-                      <button onClick={() => handleApp()} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
+                      <button onClick={() => handleApp('play')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
                         <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
                           <path d="M3 3.5L13.5 12 3 20.5V3.5Z" fill="#4CAF50"/>
                           <path d="M3 3.5L13.5 12 8.5 17 3 3.5Z" fill="#2196F3"/>
@@ -922,7 +936,7 @@ export default function CleanzoWebsite() {
                         </svg>
                         <div style={{textAlign:'left'}}><div style={{fontSize:9,opacity:.7,letterSpacing:.8,textTransform:'uppercase'}}>Get it on</div><div style={{fontSize:15,fontWeight:700}}>Google Play</div></div>
                       </button>
-                      <button onClick={() => handleApp()} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
+                      <button onClick={() => handleApp('ios')} style={{display:'inline-flex',alignItems:'center',gap:11,background:'#0c4a6e',color:'#fff',border:'none',borderRadius:14,padding:'12px 20px',cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 20px rgba(12,74,110,.28)'}}>
                         <svg width="21" height="21" viewBox="0 0 24 24" fill="white">
                           <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                         </svg>
