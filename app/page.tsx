@@ -11,7 +11,7 @@ const SITE = {
   liveBadge: 'Now live in Mumbai, Maharashtra',
   rating: '4.8',
   ratingCount: '12,400+',
-  footerNote: 'Made with ❤️ in Mumbai, Maharashtra',
+  footerNote: 'Cleenzo',
   copyright: '© Cubicle Ventures Private Limited. All rights reserved.',
   email: 'gocleenzo@gmail.com',
   playStoreUrl: 'https://play.google.com/store/apps/details?id=com.cubicleventurespvtltd.cleenzoapp',

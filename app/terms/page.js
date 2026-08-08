@@ -3,7 +3,7 @@
 const TERMS = [
   {
     title: '1. Acceptance of Terms',
-    content: `By downloading the Cleenzo app, visiting our website, or booking any service, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, please do not use our platform. These terms apply to all users including customers and Cleenzo Pros.`,
+    content: `By downloading the Cleenzo app, visiting our website, or booking any service, you agree to be bound by these Terms of Service. If you do not agree with any part of these terms, please do not use our platform. These terms apply to all users including customers and Cleenzo Pros. Cleenzo is operated by Cubicle Ventures Private Limited ("we", "us", "our"), a company registered in Yavatmal, Maharashtra, India.`,
   },
   {
     title: '2. Description of Services',
@@ -11,7 +11,7 @@ const TERMS = [
   },
   {
     title: '3. Booking & Payments',
-    content: `All bookings must be made through the Cleenzo app or website. Prices displayed are flat rates with no hidden charges. Payment is collected at the time of booking via UPI, credit/debit card, or supported wallets. Bookings are confirmed only upon successful payment. Cleenzo reserves the right to update pricing at any time; changes will not affect already-confirmed bookings.`,
+    content: `All bookings must be made through the Cleenzo app or website. Prices displayed are flat rates with no hidden charges. Payment is collected at the time of booking via UPI, credit/debit card, or supported wallets, processed securely through our payment partner, Razorpay. We do not store your full card, UPI, or bank details. Bookings are confirmed only upon successful payment. Cleenzo reserves the right to update pricing at any time; changes will not affect already-confirmed bookings.`,
   },
   {
     title: '4. Cancellation & Rescheduling',
@@ -19,7 +19,7 @@ const TERMS = [
   },
   {
     title: '5. Satisfaction Guarantee',
-    content: `We stand behind the quality of every Cleenzo Pro. If you are not satisfied with a completed service, report it within 24 hours of the booking end time via the app or by emailing support@cleenzo.in. We will arrange a free re-clean of the reported areas within 48 hours. The satisfaction guarantee does not apply to services outside the listed scope of the booked package.`,
+    content: `We stand behind the quality of every Cleenzo Pro. If you are not satisfied with a completed service, report it within 24 hours of the booking end time via the app or by emailing support@gocleenzo.com. We will arrange a free re-clean of the reported areas within 48 hours. The satisfaction guarantee does not apply to services outside the listed scope of the booked package.`,
   },
   {
     title: '6. Customer Responsibilities',
@@ -27,7 +27,7 @@ const TERMS = [
   },
   {
     title: '7. Cleenzo Pro Conduct',
-    content: `All Cleenzo Pros are background-verified, trained, and held to a professional code of conduct. They are independent service providers and not employees of Cleenzo. Cleenzo is not liable for the acts or omissions of Pros beyond what is covered by our satisfaction guarantee. Any misconduct by a Pro should be reported immediately to support@cleenzo.in.`,
+    content: `All Cleenzo Pros are background-verified, trained, and held to a professional code of conduct. They are independent service providers and not employees of Cleenzo. Cleenzo is not liable for the acts or omissions of Pros beyond what is covered by our satisfaction guarantee. Any misconduct by a Pro should be reported immediately to support@gocleenzo.com.`,
   },
   {
     title: '8. Liability Limitation',
@@ -47,11 +47,15 @@ const TERMS = [
   },
   {
     title: '12. Governing Law',
-    content: `These Terms are governed by the laws of India. Any disputes arising from these Terms or your use of Cleenzo services shall be subject to the exclusive jurisdiction of the courts of Nashik, Maharashtra.`,
+    content: `These Terms are governed by the laws of India. Any disputes arising from these Terms or your use of Cleenzo services shall be subject to the exclusive jurisdiction of the courts of Yavatmal, Maharashtra.`,
   },
   {
-    title: '13. Contact Us',
-    content: `If you have any questions about these Terms of Service, please contact us at legal@cleenzo.in or write to us at Cleenzo, Nashik, Maharashtra, India.`,
+    title: '13. Grievance Officer',
+    content: `In accordance with the Information Technology Act, 2000 and applicable rules, the Grievance Officer for Cleenzo is: Rushabh Bora, reachable at +91 9890178904. Any complaints regarding these Terms or your use of the platform may be addressed to the Grievance Officer, who will acknowledge receipt within 24 hours and aim to resolve the matter within 15 days.`,
+  },
+  {
+    title: '14. Contact Us',
+    content: `Cleenzo is operated by Cubicle Ventures Private Limited. If you have any questions about these Terms of Service, please contact us at legal@gocleenzo.com or write to us at Cubicle Ventures Private Limited, Yavatmal, Maharashtra, India.`,
   },
 ];
 
@@ -87,6 +91,9 @@ export default function TermsPage() {
           <p style={{ fontSize:16,color:'#374151',lineHeight:1.8,maxWidth:560 }}>
             Please read these terms carefully before using Cleenzo. They govern your use of our platform and services across Maharashtra.
           </p>
+          <p style={{ fontSize:13.5,color:'#0e7490',lineHeight:1.7,maxWidth:560,marginTop:10 }}>
+            Cleenzo is operated by Cubicle Ventures Private Limited, referred to as &quot;we&quot;, &quot;us&quot;, or &quot;our&quot; throughout these Terms.
+          </p>
           <div style={{ display:'flex',gap:12,marginTop:24,flexWrap:'wrap' }}>
             <span style={{ background:'#fff',border:'1.5px solid #a5f3fc',color:'#0e7490',borderRadius:50,padding:'6px 16px',fontSize:13,fontWeight:500 }}>Last updated: May 2025</span>
             <span style={{ background:'#fff',border:'1.5px solid #a5f3fc',color:'#0e7490',borderRadius:50,padding:'6px 16px',fontSize:13,fontWeight:500 }}>Effective: May 2025</span>
@@ -105,7 +112,7 @@ export default function TermsPage() {
             <div>
               <div style={{ fontSize:14,fontWeight:700,color:'#0c4a6e',marginBottom:5 }}>Summary (not a substitute for the full terms)</div>
               <p style={{ fontSize:13.5,color:'#374151',lineHeight:1.75 }}>
-                Use Cleenzo fairly and honestly. Pay for bookings. Cancel at least 2 hours in advance to avoid fees. Report issues within 24 hours for a free re-clean. Don't misuse the platform or our Pros. We keep your data safe and never sell it.
+                Use Cleenzo fairly and honestly. Pay for bookings. Cancel at least 2 hours in advance to avoid fees. Report issues within 24 hours for a free re-clean. Don&apos;t misuse the platform or our Pros. We keep your data safe and never sell it.
               </p>
             </div>
           </div>
@@ -130,7 +137,7 @@ export default function TermsPage() {
           <div style={{ background:'linear-gradient(135deg,#0c4a6e,#0e7490)',borderRadius:22,padding:'32px 28px',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:20,marginTop:16 }}>
             <div>
               <div style={{ fontSize:16,fontWeight:700,color:'#fff',marginBottom:5 }}>Questions about these terms?</div>
-              <div style={{ fontSize:13.5,color:'rgba(255,255,255,.7)' }}>Email us at legal@cleenzo.in and we'll respond within 48 hours.</div>
+              <div style={{ fontSize:13.5,color:'rgba(255,255,255,.7)' }}>Email us at legal@gocleenzo.com and we&apos;ll respond within 48 hours.</div>
             </div>
             <div style={{ display:'flex',gap:10,flexWrap:'wrap' }}>
               <a href="/privacy-policy" style={{ background:'rgba(255,255,255,.12)',border:'1.5px solid rgba(255,255,255,.25)',color:'#fff',borderRadius:50,padding:'9px 20px',fontSize:13,fontWeight:600,textDecoration:'none',fontFamily:"'Outfit',sans-serif" }}>

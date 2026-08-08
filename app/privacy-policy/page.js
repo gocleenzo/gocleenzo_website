@@ -9,17 +9,17 @@ const SECTIONS = [
   {
     title: '2. Information Collected Automatically',
     icon: '📡',
-    content: `When you use the Cleenzo app or website, we automatically collect certain technical data including your device type and operating system, IP address, app usage data and navigation patterns, location data (only when you grant permission, used to show nearby Pros and confirm service areas), and crash reports to help us fix bugs and improve performance.`,
+    content: `When you use the Cleenzo app or website, we automatically collect certain technical data including your device type and operating system, IP address, app usage data and navigation patterns, location data (collected only while the app is in use and only when you grant permission, used to show nearby Pros and confirm service areas — we do not track your location in the background), and crash reports to help us fix bugs and improve performance.`,
   },
   {
     title: '3. How We Use Your Information',
     icon: '⚙️',
-    content: `We use your information to match you with available Cleenzo Pros in your area, process and confirm bookings, send you booking confirmations and updates via SMS, email, and push notifications, process payments securely, respond to your support queries, improve our platform and services based on usage patterns, and send you occasional promotional offers (you can opt out at any time).`,
+    content: `We use your information to match you with available Cleenzo Pros in your area, process and confirm bookings, send you booking confirmations and updates via SMS, email, and push notifications, process payments securely, respond to your support queries, improve our platform and services based on usage patterns, and send you occasional promotional offers. You can opt out of marketing emails and SMS at any time via the app settings or by emailing info@gocleenzo.com, and you can disable push notifications at any time from your device's notification settings.`,
   },
   {
     title: '4. Data Sharing',
     icon: '🤝',
-    content: `We share your name and address with the assigned Cleenzo Pro solely for the purpose of completing your booking. We do not sell, rent, or trade your personal data to third parties. We may share anonymised, aggregated data (not linked to any individual) for analytics purposes. We may disclose your data if required by law, court order, or government authority.`,
+    content: `We share your name and address with the assigned Cleenzo Pro solely for the purpose of completing your booking. We do not sell, rent, or trade your personal data to third parties. We use trusted third-party service providers to operate Cleenzo, who process your data only on our behalf: Supabase (data storage and hosting), Twilio (SMS and OTP verification), Google Analytics (website usage analytics), and Razorpay (payment processing). We may share anonymised, aggregated data (not linked to any individual) for analytics purposes. We may disclose your data if required by law, court order, or government authority.`,
   },
   {
     title: '5. Data Storage & Security',
@@ -34,7 +34,7 @@ const SECTIONS = [
   {
     title: '7. Your Rights',
     icon: '✅',
-    content: `You have the right to access the personal data we hold about you, request correction of inaccurate data, request deletion of your account and associated data, opt out of marketing communications at any time via the app settings or by emailing privacy@cleenzo.in, and lodge a complaint with the relevant data protection authority if you believe your rights have been violated.`,
+    content: `You have the right to access the personal data we hold about you, request correction of inaccurate data, and request deletion of your account and associated data. You can delete your account directly from within the app under Settings > Delete Account, or by emailing info@gocleenzo.com. You can also opt out of marketing communications at any time via the app settings, and lodge a complaint with the relevant data protection authority if you believe your rights have been violated.`,
   },
   {
     title: '8. Cookies & Tracking',
@@ -44,7 +44,7 @@ const SECTIONS = [
   {
     title: '9. Children\'s Privacy',
     icon: '👶',
-    content: `Cleenzo services are intended for users aged 18 and above. We do not knowingly collect personal data from children under 18. If we become aware that a child under 18 has provided us with personal information, we will delete it immediately. If you believe a child has submitted their data to us, please contact privacy@cleenzo.in.`,
+    content: `Cleenzo services are intended for users aged 18 and above. We do not knowingly collect personal data from children under 18. If we become aware that a child under 18 has provided us with personal information, we will delete it immediately. If you believe a child has submitted their data to us, please contact info@gocleenzo.com.`,
   },
   {
     title: '10. Third-Party Links',
@@ -57,9 +57,14 @@ const SECTIONS = [
     content: `We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. We will notify you of significant changes via the app or your registered email address. The "last updated" date at the top of this page will always reflect the most recent revision. Continued use of our services after changes are posted means you accept the updated policy.`,
   },
   {
-    title: '12. Contact Us',
+    title: '12. Grievance Officer',
+    icon: '🧑‍⚖️',
+    content: `In accordance with the Information Technology Act, 2000, the Information Technology (Reasonable Security Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011, and the Digital Personal Data Protection Act, 2023, the Grievance Officer for Cleenzo is: Rushabh Bora, reachable at +91 9890178904. Any complaints or concerns regarding the processing of your personal data may be addressed to the Grievance Officer, who will acknowledge receipt within 24 hours and aim to resolve the grievance within 15 days.`,
+  },
+  {
+    title: '13. Contact Us',
     icon: '📧',
-    content: `If you have any questions, concerns, or requests related to your privacy or this policy, please reach out to us at privacy@cleenzo.in. You can also write to us at: Cleenzo, Nashik, Maharashtra, India. We aim to respond to all privacy-related queries within 48 hours.`,
+    content: `Cleenzo is operated by Cubicle Ventures Private Limited. If you have any questions, concerns, or requests related to your privacy or this policy, please reach out to us at info@gocleenzo.com. You can also write to us at: Cubicle Ventures Private Limited, Yavatmal, Maharashtra, India. We aim to respond to all privacy-related queries within 48 hours.`,
   },
 ];
 
@@ -95,6 +100,9 @@ export default function PrivacyPolicyPage() {
           <p style={{ fontSize:16,color:'#374151',lineHeight:1.8,maxWidth:560 }}>
             Your privacy matters to us. This policy explains what data we collect, how we use it, and the rights you have over your information.
           </p>
+          <p style={{ fontSize:13.5,color:'#0e7490',lineHeight:1.7,maxWidth:560,marginTop:10 }}>
+            Cleenzo is operated by Cubicle Ventures Private Limited, referred to as &quot;we&quot;, &quot;us&quot;, or &quot;our&quot; throughout this policy.
+          </p>
           <div style={{ display:'flex',gap:12,marginTop:24,flexWrap:'wrap' }}>
             <span style={{ background:'#fff',border:'1.5px solid #a5f3fc',color:'#0e7490',borderRadius:50,padding:'6px 16px',fontSize:13,fontWeight:500 }}>Last updated: May 2025</span>
             <span style={{ background:'#fff',border:'1.5px solid #a5f3fc',color:'#0e7490',borderRadius:50,padding:'6px 16px',fontSize:13,fontWeight:500 }}>Effective: May 2025</span>
@@ -114,7 +122,7 @@ export default function PrivacyPolicyPage() {
             <div>
               <div style={{ fontSize:14,fontWeight:700,color:'#0c4a6e',marginBottom:5 }}>The short version</div>
               <p style={{ fontSize:13.5,color:'#374151',lineHeight:1.75 }}>
-                We collect only what's needed to run the service. We never sell your data. We share your address with your assigned Pro only for your booking. You can request deletion of your data at any time by emailing privacy@cleenzo.in.
+                We collect only what&apos;s needed to run the service. We never sell your data. We share your address with your assigned Pro only for your booking. You can request deletion of your data at any time by emailing info@gocleenzo.com.
               </p>
             </div>
           </div>
@@ -159,7 +167,7 @@ export default function PrivacyPolicyPage() {
           <div style={{ background:'linear-gradient(135deg,#0c4a6e,#0e7490)',borderRadius:22,padding:'32px 28px',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:20,marginTop:16 }}>
             <div>
               <div style={{ fontSize:16,fontWeight:700,color:'#fff',marginBottom:5 }}>Questions about your privacy?</div>
-              <div style={{ fontSize:13.5,color:'rgba(255,255,255,.7)' }}>Email us at privacy@cleenzo.in — we respond within 48 hours.</div>
+              <div style={{ fontSize:13.5,color:'rgba(255,255,255,.7)' }}>Email us at info@gocleenzo.com — we respond within 48 hours.</div>
             </div>
             <div style={{ display:'flex',gap:10,flexWrap:'wrap' }}>
               <a href="/terms" style={{ background:'rgba(255,255,255,.12)',border:'1.5px solid rgba(255,255,255,.25)',color:'#fff',borderRadius:50,padding:'9px 20px',fontSize:13,fontWeight:600,textDecoration:'none',fontFamily:"'Outfit',sans-serif" }}>
