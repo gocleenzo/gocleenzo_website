@@ -15,7 +15,7 @@ const SITE = {
   copyright: '© Cubicle Ventures Private Limited. All rights reserved.',
   email: 'gocleenzo@gmail.com',
   playStoreUrl: 'https://play.google.com/store/apps/details?id=com.cubicleventurespvtltd.cleenzoapp',
-  appStoreUrl: 'https://apps.apple.com',
+  appStoreUrl: 'https://apps.apple.com/in/app/cleenzo/id6799053209',
 };
 
 const CITIES_MAP = {
@@ -277,18 +277,23 @@ export default function CleanzoWebsite() {
   //  - no argument       → generic "get the app" entry points; best-effort
   //                        OS detection sends Android users straight to
   //                        Play Store, everyone else gets the toast
-  const handleApp = (store?: 'play' | 'ios') => {
-    const isAndroid = typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent);
+    const handleApp = (store?: 'play' | 'ios') => {
+    const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+    const isAndroid = /android/i.test(ua);
+    const isIOS = /iPad|iPhone|iPod/i.test(ua);
 
     if (store === 'play' || (!store && isAndroid)) {
       window.open(SITE.playStoreUrl, '_blank', 'noopener,noreferrer');
       return;
     }
-    if (store === 'ios') {
-      showToast("🍎 iOS app launching soon! We'll notify you.");
+    if (store === 'ios' || (!store && isIOS)) {
+      window.open(SITE.appStoreUrl, '_blank', 'noopener,noreferrer');
       return;
     }
-    showToast("🚀 App launching soon! We'll notify you.");
+    // Neither a specific store requested nor a mobile OS detected
+    // (e.g. desktop visitor with no store argument) — show both options
+    // via toast rather than guessing.
+    showToast("📱 Available on Google Play and the App Store!");
   };
   const toggleFaq  = (id: string) => setOpenFaqId(openFaqId === id ? null : id);
 
@@ -463,7 +468,7 @@ export default function CleanzoWebsite() {
             <button className="nav-link" onClick={() => scrollTo('faq')}>FAQ</button>
           </div>
           <div className="nav-desktop" style={{display:'flex',gap:12,alignItems:'center'}}>
-            <button onClick={() => handleApp()} style={{padding:'10px 22px',fontSize:15,fontWeight:600,color:'#fff',background:'transparent',border:'2px solid rgba(255,255,255,.7)',borderRadius:50,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all .2s'}}
+                        <button onClick={() => scrollTo('download')} style={{padding:'10px 22px',fontSize:15,fontWeight:600,color:'#fff',background:'transparent',border:'2px solid rgba(255,255,255,.7)',borderRadius:50,cursor:'pointer',fontFamily:"'Outfit',sans-serif",transition:'all .2s'}}
               onMouseOver={e=>{e.currentTarget.style.background='rgba(255,255,255,.16)';}} onMouseOut={e=>{e.currentTarget.style.background='transparent';}}>Get the app</button>
             <button onClick={goServices} style={{padding:'11px 26px',fontSize:15,fontWeight:700,color:'#0e7490',background:'#fff',border:'none',borderRadius:50,cursor:'pointer',fontFamily:"'Outfit',sans-serif",boxShadow:'0 6px 18px rgba(0,0,0,.14)',transition:'transform .2s'}}
               onMouseOver={e=>e.currentTarget.style.transform='translateY(-2px)'} onMouseOut={e=>e.currentTarget.style.transform='translateY(0)'}>Book now →</button>
@@ -478,7 +483,7 @@ export default function CleanzoWebsite() {
             {['Services','How it works','Cities','Reviews','FAQ'].map(l => (
               <button key={l} style={{textAlign:'left',padding:'8px 18px',fontSize:15,fontWeight:600,color:'#0c4a6e',background:'none',border:'none',cursor:'pointer',fontFamily:"'Outfit',sans-serif"}} onClick={() => { setMobileOpen(false); if (l==='Services') goServices(); else scrollTo(l.toLowerCase().replace(/ /g,'')); }}>{l}</button>
             ))}
-            <button className="btn-primary" style={{padding:'12px',fontSize:14,marginTop:4,margin:'4px 18px 0'}} onClick={() => { setMobileOpen(false); handleApp(); }}>Download App</button>
+                        <button className="btn-primary" style={{padding:'12px',fontSize:14,marginTop:4,margin:'4px 18px 0'}} onClick={() => { setMobileOpen(false); scrollTo('download'); }}>Download App</button>
           </div>
         )}
       </nav>
@@ -756,7 +761,7 @@ export default function CleanzoWebsite() {
         </section>
 
         {/* DOWNLOAD CTA */}
-        <section style={{position:'relative',overflow:'hidden',minHeight:520,display:'flex',alignItems:'center',padding:'0'}}>
+        <section id="download" style={{position:'relative',overflow:'hidden',minHeight:520,display:'flex',alignItems:'center',padding:'0'}}>
           <Image
             src="/cleenzo-pros.png"
             alt="Cleenzo Pros cleaning"
